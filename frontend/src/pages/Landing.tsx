@@ -14,26 +14,20 @@ export default function Landing() {
     <div className="min-h-screen bg-white text-gray-900">
       <NavBar />
       <Hero />
-      <FeatureBand />
+      <section id="modules" className="mt-25">
+        <Modules />
+      </section>
 
-      <main className="mx-auto max-w-7xl px-6 pb-24">
-        <section className="mt-20">
-          <SolutionsGrid />
-        </section>
-
-        <section className="mt-20">
+      <main className="max-w-7xl px-6 flex flex-col gap-6">
+        <section id="workflow" className="mt-20">
           <Workflow />
-        </section>
-
-        <section id="modules" className="mt-20">
-          <Modules />
         </section>
 
         <section className="mt-20">
           <Stats />
         </section>
 
-        <section className="mt-20">
+        <section id="assetflow" className="mt-20">
           <WhyAssetFlow />
         </section>
 

@@ -11,14 +11,9 @@ export default function Hero() {
 
       <div className="relative mx-auto grid max-w-7xl grid-cols-1 items-center gap-10 px-6 py-20 md:grid-cols-2 md:py-28">
         <div className="max-w-xl">
-          <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-sky-200 bg-white/80 px-3 py-1 text-xs font-medium text-sky-700 shadow-sm">
-            <Sparkles size={14} />
-            Built for the Odoo Hackathon
-          </div>
-
           <h1 className="text-4xl font-extrabold leading-tight text-gray-900 sm:text-5xl">
             A system for managing every asset your organization{" "}
-            <span className="rounded-lg bg-sky-100 px-2 py-0.5 text-sky-700">needs</span>
+            <span className="text-sky-700">needs</span>
           </h1>
 
           <p className="mt-5 text-base text-gray-600">
@@ -29,7 +24,7 @@ export default function Hero() {
           <div className="mt-7 flex flex-wrap gap-3">
             <Link
               to="/signup"
-              className="rounded-full bg-gradient-to-r from-sky-600 to-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-sky-200 hover:from-sky-700 hover:to-indigo-700"
+              className="rounded-full bg-sky-700 px-6 py-3 text-sm font-semibold text-white shadow-md shadow-sky-200 hover:bg-sky-800"
             >
               Get Started
             </Link>

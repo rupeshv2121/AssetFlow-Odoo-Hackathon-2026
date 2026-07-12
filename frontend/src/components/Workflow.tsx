@@ -11,10 +11,16 @@ const STEPS = [
 export default function Workflow() {
   return (
     <div id="workflow">
-      <h2 className="text-lg font-semibold text-gray-900">Workflow</h2>
-      <p className="mt-2 text-sm text-gray-600">Simple, auditable lifecycle for every asset.</p>
+      <div className="text-center">
+        <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+          Workflow
+        </h2>
+        <p className="mx-auto mt-3 max-w-xl text-sm text-gray-600">
+          Simple, auditable lifecycle for every asset.
+        </p>
+      </div>
 
-      <div className="relative mt-10 flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-4">
+      <div className="relative mt-6 flex flex-col gap-8 sm:flex-row sm:items-start sm:gap-4">
         <div className="absolute left-7 right-7 top-7 hidden h-0.5 bg-gradient-to-r from-sky-200 via-indigo-200 to-sky-200 sm:block" />
         {STEPS.map((s, idx) => (
           <motion.div

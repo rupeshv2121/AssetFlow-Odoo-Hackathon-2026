@@ -42,17 +42,34 @@ const ITEMS = [
 export default function WhyAssetFlow() {
   return (
     <div id="about">
-      <h2 className="text-lg font-semibold text-gray-900">Why AssetFlow</h2>
-      <p className="mt-2 text-sm text-gray-600">Built for organizations that need reliable asset operations.</p>
+      <div className="text-center">
+        <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+          Why AssetFlow
+        </h2>
+        <p className="mx-auto mt-3 max-w-xl text-sm text-gray-600">
+          Built for organizations that need reliable asset operations.
+        </p>
+      </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 md:grid-cols-3">
         {ITEMS.map(({ title, desc, icon: Icon, color }) => (
-          <div key={title} className="rounded-xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-            <div className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${color}`}>
+          <div
+            key={title}
+            className="group rounded-xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-sky-500 hover:shadow-xl"
+          >
+            <div
+              className={`inline-flex h-10 w-10 items-center justify-center rounded-lg ${color} transition-transform duration-300 group-hover:scale-110`}
+            >
               <Icon size={18} />
             </div>
-            <div className="mt-3 text-sm font-semibold text-gray-900">{title}</div>
-            <div className="mt-1 text-sm text-gray-600">{desc}</div>
+
+            <h3 className="mt-3 text-sm font-semibold text-gray-900">
+              {title}
+            </h3>
+
+            <p className="mt-1 text-sm text-gray-600">
+              {desc}
+            </p>
           </div>
         ))}
       </div>
