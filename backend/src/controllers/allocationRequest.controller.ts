@@ -4,6 +4,7 @@ import { prisma } from "@/config/prisma";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { AppError } from "@/utils/AppError";
 import { createAllocationRequestSchema } from "@/utils/validators/allocationRequest.validator";
+import { logActivity, notify } from "@/utils/activityLog";
 
 const HELD_STATUSES: Prisma.AllocationWhereInput["status"] = { in: ["ACTIVE", "RETURN_REQUESTED"] };
 
@@ -124,6 +125,13 @@ export const createAllocationRequest = asyncHandler(async (req: Request, res: Re
     },
     select: requestSelect,
   });
+  await logActivity({
+    userId: req.user!.id,
+    action: "CREATE_ALLOCATION_REQUEST",
+    entityType: "AllocationRequest",
+    entityId: allocationRequest.id,
+    metadata: { assetTag: asset.assetTag, type: allocationRequest.type },
+  });
   res.status(201).json({ allocationRequest });
 });
 
@@ -175,6 +183,32 @@ export const approveAllocationRequest = asyncHandler(async (req: Request, res: R
   await prisma.$transaction(ops);
 
   const updated = await prisma.allocationRequest.findUnique({ where: { id }, select: requestSelect });
+
+  await logActivity({
+    userId: req.user!.id,
+    action: "APPROVE_ALLOCATION_REQUEST",
+    entityType: "AllocationRequest",
+    entityId: id,
+    metadata: { assetTag: request.asset.assetTag, type: request.type },
+  });
+  if (request.type === "TRANSFER") {
+    await notify({
+      userId: request.requestedById,
+      type: "TRANSFER_APPROVED",
+      message: `Your transfer request for ${request.asset.name} (${request.asset.assetTag}) was approved`,
+      relatedEntityType: "Asset",
+      relatedEntityId: request.assetId,
+    });
+  } else if (request.toEmployeeId) {
+    await notify({
+      userId: request.toEmployeeId,
+      type: "ASSET_ASSIGNED",
+      message: `You've been allocated ${request.asset.name} (${request.asset.assetTag})`,
+      relatedEntityType: "Asset",
+      relatedEntityId: request.assetId,
+    });
+  }
+
   res.json({ allocationRequest: updated });
 });
 
@@ -190,6 +224,13 @@ export const rejectAllocationRequest = asyncHandler(async (req: Request, res: Re
     where: { id },
     data: { status: "REJECTED", approvedById: req.user!.id, resolvedAt: new Date() },
     select: requestSelect,
+  });
+  await logActivity({
+    userId: req.user!.id,
+    action: "REJECT_ALLOCATION_REQUEST",
+    entityType: "AllocationRequest",
+    entityId: id,
+    metadata: { assetTag: request.asset.assetTag, type: request.type },
   });
   res.json({ allocationRequest: updated });
 });

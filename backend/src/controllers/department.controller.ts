@@ -3,6 +3,7 @@ import { prisma } from "@/config/prisma";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { AppError } from "@/utils/AppError";
 import { createDepartmentSchema, updateDepartmentSchema } from "@/utils/validators/department.validator";
+import { logActivity } from "@/utils/activityLog";
 
 const summarySelect = {
   id: true,
@@ -55,6 +56,13 @@ export const createDepartment = asyncHandler(async (req: Request, res: Response)
       select: summarySelect,
     });
   });
+  await logActivity({
+    userId: req.user!.id,
+    action: "CREATE_DEPARTMENT",
+    entityType: "Department",
+    entityId: department.id,
+    metadata: { name: department.name },
+  });
   res.status(201).json({ department });
 });
 
@@ -75,6 +83,13 @@ export const updateDepartment = asyncHandler(async (req: Request, res: Response)
       select: summarySelect,
     });
   });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_DEPARTMENT",
+    entityType: "Department",
+    entityId: department.id,
+    metadata: { name: department.name },
+  });
   res.json({ department });
 });
 
@@ -90,6 +105,13 @@ export const deactivateDepartment = asyncHandler(async (req: Request, res: Respo
     where: { id },
     data: { status: "INACTIVE" },
     select: summarySelect,
+  });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_DEPARTMENT",
+    entityType: "Department",
+    entityId: department.id,
+    metadata: { name: department.name, status: "INACTIVE" },
   });
   res.json({ department });
 });

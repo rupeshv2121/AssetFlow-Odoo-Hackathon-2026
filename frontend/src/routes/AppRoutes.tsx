@@ -16,6 +16,8 @@ import ResourceBooking from "@/pages/ResourceBooking";
 import MaintenanceManagement from "@/pages/MaintenanceManagement";
 import ReportsAnalytics from "@/pages/ReportsAnalytics";
 import ActivityCenter from "@/pages/ActivityCenter";
+import AssetAudit from "@/pages/AssetAudit";
+import AuditCycleDetail from "@/pages/AuditCycleDetail";
 import Placeholder from "@/pages/placeholders/Placeholder";
 
 export default function AppRoutes() {
@@ -33,6 +35,8 @@ export default function AppRoutes() {
           <Route path="/dashboard" element={<Dashboard />} />
           <Route path="/assets" element={<AssetDirectory />} />
           <Route path="/assets/:id" element={<AssetDetail />} />
+          <Route path="/audits" element={<AssetAudit />} />
+          <Route path="/audits/:id" element={<AuditCycleDetail />} />
 
           {/* Placeholder routes for role-based sidebar modules */}
           <Route path="/bookings" element={<ResourceBooking />} />

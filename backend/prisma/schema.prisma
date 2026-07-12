@@ -146,6 +146,7 @@ model Department {
   allocationRequestsFrom AllocationRequest[] @relation("AllocationRequestFromDepartment")
   allocationRequestsTo   AllocationRequest[] @relation("AllocationRequestToDepartment")
   bookings    Booking[]    @relation("BookingDepartment")
+  auditCycles AuditCycle[]
 
   @@index([parentId])
 }
@@ -272,6 +273,7 @@ model AuditCycle {
   id                String   @id @default(uuid())
   name              String
   scopeDepartmentId String?
+  scopeDepartment   Department? @relation(fields: [scopeDepartmentId], references: [id])
   scopeLocation     String?
   startDate         DateTime
   endDate           DateTime

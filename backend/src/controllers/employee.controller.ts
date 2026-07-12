@@ -3,6 +3,7 @@ import { prisma } from "@/config/prisma";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { AppError } from "@/utils/AppError";
 import { updateEmployeeSchema, promoteEmployeeSchema } from "@/utils/validators/employee.validator";
+import { logActivity } from "@/utils/activityLog";
 
 const directorySelect = {
   id: true,
@@ -59,6 +60,13 @@ export const updateEmployee = asyncHandler(async (req: Request, res: Response) =
     data: input,
     select: directorySelect,
   });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_EMPLOYEE",
+    entityType: "User",
+    entityId: employee.id,
+    metadata: { name: employee.name, ...input },
+  });
   res.json({ employee });
 });
 
@@ -85,5 +93,12 @@ export const promoteEmployee = asyncHandler(async (req: Request, res: Response) 
     return updated;
   });
 
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_EMPLOYEE_ROLE",
+    entityType: "User",
+    entityId: employee.id,
+    metadata: { name: employee.name, newRole: role },
+  });
   res.json({ employee });
 });

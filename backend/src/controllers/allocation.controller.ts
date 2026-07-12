@@ -4,6 +4,7 @@ import { prisma } from "@/config/prisma";
 import { asyncHandler } from "@/utils/asyncHandler";
 import { AppError } from "@/utils/AppError";
 import { createAllocationSchema, returnAllocationSchema } from "@/utils/validators/allocation.validator";
+import { logActivity, notify } from "@/utils/activityLog";
 
 const HELD_STATUSES: Prisma.AllocationWhereInput["status"] = { in: ["ACTIVE", "RETURN_REQUESTED"] };
 
@@ -94,6 +95,24 @@ export const createAllocation = asyncHandler(async (req: Request, res: Response)
     select: allocationSelect,
     orderBy: { allocatedAt: "desc" },
   });
+
+  await logActivity({
+    userId: req.user!.id,
+    action: "CREATE_ALLOCATION",
+    entityType: "Allocation",
+    entityId: allocation?.id,
+    metadata: { assetTag: asset.assetTag, employeeId: input.employeeId, departmentId: input.departmentId },
+  });
+  if (input.employeeId) {
+    await notify({
+      userId: input.employeeId,
+      type: "ASSET_ASSIGNED",
+      message: `You've been allocated ${asset.name} (${asset.assetTag})`,
+      relatedEntityType: "Asset",
+      relatedEntityId: asset.id,
+    });
+  }
+
   res.status(201).json({ allocation });
 });
 
@@ -120,6 +139,13 @@ export const requestReturn = asyncHandler(async (req: Request, res: Response) =>
     data: { status: "RETURN_REQUESTED", returnRequestedAt: new Date() },
     select: allocationSelect,
   });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_ALLOCATION",
+    entityType: "Allocation",
+    entityId: updated.id,
+    metadata: { assetTag: updated.asset.assetTag, change: "return_requested" },
+  });
   res.json({ allocation: updated });
 });
 
@@ -140,5 +166,12 @@ export const markReturned = asyncHandler(async (req: Request, res: Response) => 
   ]);
 
   const updated = await prisma.allocation.findUnique({ where: { id }, select: allocationSelect });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_ALLOCATION",
+    entityType: "Allocation",
+    entityId: id,
+    metadata: { assetTag: updated?.asset.assetTag, change: "returned", returnCondition },
+  });
   res.json({ allocation: updated });
 });

@@ -1,7 +1,5 @@
 import NavBar from "@/components/NavBar";
 import Hero from "@/components/Hero";
-import FeatureBand from "@/components/FeatureBand";
-import SolutionsGrid from "@/components/SolutionsGrid";
 import Workflow from "@/components/Workflow";
 import Modules from "@/components/Modules";
 import Stats from "@/components/Stats";

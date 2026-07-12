@@ -15,6 +15,7 @@ import {
   Settings,
   UserCircle,
   History,
+  ShieldCheck,
   type LucideIcon,
 } from "lucide-react";
 
@@ -40,6 +41,7 @@ export const SIDEBAR_ICONS: Record<string, LucideIcon> = {
   resourceBooking: CalendarClock,
   maintenance: Wrench,
   maintenanceRequests: Wrench,
+  assetAudit: ShieldCheck,
   auditLogs: ClipboardList,
   reports: BarChart3,
   notifications: Bell,
@@ -66,6 +68,7 @@ export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
     { key: "transferRequests", title: "Transfer Requests", path: "/transfers" },
     { key: "resourceBooking", title: "Resource Booking", path: "/bookings" },
     { key: "maintenance", title: "Maintenance", path: "/maintenance" },
+    { key: "assetAudit", title: "Asset Audit", path: "/audits" },
     { key: "auditLogs", title: "Audit Logs", path: "/audit-logs" },
     { key: "reports", title: "Reports & Analytics", path: "/reports" },
     { key: "settings", title: "Settings", path: "/settings" },
@@ -78,6 +81,7 @@ export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
     { key: "transferRequests", title: "Transfer Requests", path: "/transfers" },
     { key: "resourceBooking", title: "Resource Booking", path: "/bookings" },
     { key: "maintenanceRequests", title: "Maintenance Requests", path: "/maintenance" },
+    { key: "assetAudit", title: "Asset Audit", path: "/audits" },
   ],
 
   DEPARTMENT_HEAD: [
@@ -86,6 +90,7 @@ export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
     { key: "departmentAssets", title: "Department Assets", path: "/department/assets" },
     { key: "resourceBooking", title: "Resource Booking", path: "/bookings" },
     { key: "assetRequests", title: "Asset Requests", path: "/requests" },
+    { key: "assetAudit", title: "Asset Audit", path: "/audits" },
     { key: "departmentReports", title: "Department Reports", path: "/reports/department" },
   ],
 
@@ -96,6 +101,7 @@ export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
     { key: "raiseMaintenance", title: "Raise Maintenance", path: "/requests/maintenance" },
     { key: "bookResources", title: "Book Resources", path: "/bookings" },
     { key: "myRequests", title: "My Requests", path: "/my-requests" },
+    { key: "assetAudit", title: "Asset Audit", path: "/audits" },
   ],
 };
 

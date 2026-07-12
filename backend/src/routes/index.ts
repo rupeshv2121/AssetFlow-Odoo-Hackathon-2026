@@ -11,6 +11,7 @@ import bookingRoutes from "@/routes/booking.routes";
 import maintenanceRoutes from "@/routes/maintenance.routes";
 import reportsRoutes from "@/routes/reports.routes";
 import activityRoutes from "@/routes/activity.routes";
+import auditCycleRoutes from "@/routes/auditCycle.routes";
 
 const router = Router();
 
@@ -26,8 +27,6 @@ router.use("/bookings", bookingRoutes);
 router.use("/maintenance", maintenanceRoutes);
 router.use("/reports", reportsRoutes);
 router.use("/activity", activityRoutes);
-
-// Other devs: mount your module's router here, e.g.
-// router.use("/audits", auditRoutes);
+router.use("/audit-cycles", auditCycleRoutes);
 
 export default router;
