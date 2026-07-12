@@ -103,14 +103,14 @@ export default function EmployeesTab({ employees, departments, refetch }: Props)
                           onClick={() => withBusy(emp.id, () => employeeService.promoteEmployee(emp.id, "DEPARTMENT_HEAD"))}
                           className="text-xs font-medium text-gray-600 hover:underline disabled:opacity-50"
                         >
-                          → Dept Head
+                          Dept Head
                         </button>
                         <button
                           disabled={isBusy}
                           onClick={() => withBusy(emp.id, () => employeeService.promoteEmployee(emp.id, "ASSET_MANAGER"))}
                           className="text-xs font-medium text-gray-600 hover:underline disabled:opacity-50"
                         >
-                          → Asset Manager
+                          Asset Manager
                         </button>
                       </div>
                     ) : (
