@@ -68,9 +68,7 @@ export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
     { key: "maintenance", title: "Maintenance", path: "/maintenance" },
     { key: "auditLogs", title: "Audit Logs", path: "/audit-logs" },
     { key: "reports", title: "Reports & Analytics", path: "/reports" },
-    { key: "notifications", title: "Notifications", path: "/notifications" },
     { key: "settings", title: "Settings", path: "/settings" },
-    { key: "profile", title: "Profile", path: "/profile" },
   ],
 
   ASSET_MANAGER: [
@@ -80,8 +78,6 @@ export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
     { key: "transferRequests", title: "Transfer Requests", path: "/transfers" },
     { key: "resourceBooking", title: "Resource Booking", path: "/bookings" },
     { key: "maintenanceRequests", title: "Maintenance Requests", path: "/maintenance" },
-    { key: "notifications", title: "Notifications", path: "/notifications" },
-    { key: "profile", title: "Profile", path: "/profile" },
   ],
 
   DEPARTMENT_HEAD: [
@@ -91,8 +87,6 @@ export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
     { key: "resourceBooking", title: "Resource Booking", path: "/bookings" },
     { key: "assetRequests", title: "Asset Requests", path: "/requests" },
     { key: "departmentReports", title: "Department Reports", path: "/reports/department" },
-    { key: "notifications", title: "Notifications", path: "/notifications" },
-    { key: "profile", title: "Profile", path: "/profile" },
   ],
 
   EMPLOYEE: [
@@ -102,8 +96,6 @@ export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
     { key: "raiseMaintenance", title: "Raise Maintenance", path: "/requests/maintenance" },
     { key: "bookResources", title: "Book Resources", path: "/bookings" },
     { key: "myRequests", title: "My Requests", path: "/my-requests" },
-    { key: "notifications", title: "Notifications", path: "/notifications" },
-    { key: "profile", title: "Profile", path: "/profile" },
   ],
 };
 

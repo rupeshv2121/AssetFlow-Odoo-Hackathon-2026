@@ -8,6 +8,7 @@ import {
   rescheduleBookingSchema,
   listBookingsQuerySchema,
 } from "@/utils/validators/booking.validator";
+import { logActivity, notify } from "@/utils/activityLog";
 
 const PRIVILEGED_ROLES = ["ADMIN", "ASSET_MANAGER", "DEPARTMENT_HEAD"];
 
@@ -96,6 +97,22 @@ export const createBooking = asyncHandler(async (req: Request, res: Response) =>
     },
     select: bookingSelect,
   });
+
+  await logActivity({
+    userId: req.user!.id,
+    action: "CREATE_BOOKING",
+    entityType: "Booking",
+    entityId: booking.id,
+    metadata: { assetTag: asset.assetTag, startTime: booking.startTime, endTime: booking.endTime },
+  });
+  await notify({
+    userId: booking.bookedById,
+    type: "BOOKING_CONFIRMED",
+    message: `Your booking for ${asset.name} (${asset.assetTag}) on ${booking.startTime.toLocaleString()} is confirmed`,
+    relatedEntityType: "Booking",
+    relatedEntityId: booking.id,
+  });
+
   res.status(201).json({ booking: withComputedStatus(booking) });
 });
 
@@ -116,6 +133,22 @@ export const cancelBooking = asyncHandler(async (req: Request, res: Response) =>
   assertCanModify(req, booking);
 
   const updated = await prisma.booking.update({ where: { id }, data: { status: "CANCELLED" }, select: bookingSelect });
+
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_BOOKING",
+    entityType: "Booking",
+    entityId: updated.id,
+    metadata: { assetTag: updated.asset.assetTag, change: "cancelled" },
+  });
+  await notify({
+    userId: updated.bookedById,
+    type: "BOOKING_CANCELLED",
+    message: `Your booking for ${updated.asset.name} (${updated.asset.assetTag}) was cancelled`,
+    relatedEntityType: "Booking",
+    relatedEntityId: updated.id,
+  });
+
   res.json({ booking: withComputedStatus(updated) });
 });
 
@@ -141,6 +174,13 @@ export const rescheduleBooking = asyncHandler(async (req: Request, res: Response
     where: { id },
     data: { startTime: input.startTime, endTime: input.endTime },
     select: bookingSelect,
+  });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_BOOKING",
+    entityType: "Booking",
+    entityId: updated.id,
+    metadata: { assetTag: updated.asset.assetTag, change: "rescheduled" },
   });
   res.json({ booking: withComputedStatus(updated) });
 });

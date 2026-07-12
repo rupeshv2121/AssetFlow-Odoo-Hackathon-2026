@@ -9,6 +9,7 @@ import {
   updateAssetStatusSchema,
   listAssetsQuerySchema,
 } from "@/utils/validators/asset.validator";
+import { logActivity } from "@/utils/activityLog";
 
 const HELD_STATUSES: AllocationStatus[] = ["ACTIVE", "RETURN_REQUESTED"];
 
@@ -147,6 +148,13 @@ export const createAsset = asyncHandler(async (req: Request, res: Response) => {
     data: { ...input, assetTag },
     select: listSelect,
   });
+  await logActivity({
+    userId: req.user!.id,
+    action: "CREATE_ASSET",
+    entityType: "Asset",
+    entityId: asset.id,
+    metadata: { assetTag: asset.assetTag, name: asset.name },
+  });
   res.status(201).json({ asset });
 });
 
@@ -163,6 +171,13 @@ export const updateAsset = asyncHandler(async (req: Request, res: Response) => {
   }
 
   const asset = await prisma.asset.update({ where: { id }, data: input, select: listSelect });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_ASSET",
+    entityType: "Asset",
+    entityId: asset.id,
+    metadata: { assetTag: asset.assetTag },
+  });
   res.json({ asset });
 });
 
@@ -182,5 +197,12 @@ export const updateAssetStatus = asyncHandler(async (req: Request, res: Response
   }
 
   const asset = await prisma.asset.update({ where: { id }, data: { status }, select: listSelect });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_ASSET_STATUS",
+    entityType: "Asset",
+    entityId: asset.id,
+    metadata: { assetTag: asset.assetTag, from: existing.status, to: status },
+  });
   res.json({ asset });
 });

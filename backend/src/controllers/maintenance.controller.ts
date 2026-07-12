@@ -8,6 +8,7 @@ import {
   assignTechnicianSchema,
   listMaintenanceQuerySchema,
 } from "@/utils/validators/maintenance.validator";
+import { logActivity, notify } from "@/utils/activityLog";
 
 const maintenanceSelect = {
   id: true,
@@ -98,6 +99,13 @@ export const createMaintenanceRequest = asyncHandler(async (req: Request, res: R
     },
     select: maintenanceSelect,
   });
+  await logActivity({
+    userId: req.user!.id,
+    action: "CREATE_MAINTENANCE_REQUEST",
+    entityType: "MaintenanceRequest",
+    entityId: maintenanceRequest.id,
+    metadata: { assetTag: asset.assetTag, priority: maintenanceRequest.priority },
+  });
   res.status(201).json({ maintenanceRequest });
 });
 
@@ -115,6 +123,22 @@ export const approveMaintenanceRequest = asyncHandler(async (req: Request, res: 
   ]);
 
   const updated = await prisma.maintenanceRequest.findUnique({ where: { id }, select: maintenanceSelect });
+
+  await logActivity({
+    userId: req.user!.id,
+    action: "APPROVE_MAINTENANCE_REQUEST",
+    entityType: "MaintenanceRequest",
+    entityId: id,
+    metadata: { assetTag: request.asset.assetTag },
+  });
+  await notify({
+    userId: request.raisedById,
+    type: "MAINTENANCE_APPROVED",
+    message: `Your maintenance request for ${request.asset.name} (${request.asset.assetTag}) was approved`,
+    relatedEntityType: "MaintenanceRequest",
+    relatedEntityId: id,
+  });
+
   res.json({ maintenanceRequest: updated });
 });
 
@@ -127,6 +151,20 @@ export const rejectMaintenanceRequest = asyncHandler(async (req: Request, res: R
     where: { id },
     data: { status: "REJECTED", approvedById: req.user!.id, resolvedAt: new Date() },
     select: maintenanceSelect,
+  });
+  await logActivity({
+    userId: req.user!.id,
+    action: "REJECT_MAINTENANCE_REQUEST",
+    entityType: "MaintenanceRequest",
+    entityId: id,
+    metadata: { assetTag: request.asset.assetTag },
+  });
+  await notify({
+    userId: request.raisedById,
+    type: "MAINTENANCE_REJECTED",
+    message: `Your maintenance request for ${request.asset.name} (${request.asset.assetTag}) was rejected`,
+    relatedEntityType: "MaintenanceRequest",
+    relatedEntityId: id,
   });
   res.json({ maintenanceRequest: updated });
 });
@@ -144,6 +182,13 @@ export const assignTechnician = asyncHandler(async (req: Request, res: Response)
     data: { status: "TECHNICIAN_ASSIGNED", technicianName },
     select: maintenanceSelect,
   });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_MAINTENANCE_REQUEST",
+    entityType: "MaintenanceRequest",
+    entityId: id,
+    metadata: { assetTag: request.asset.assetTag, change: "technician_assigned", technicianName },
+  });
   res.json({ maintenanceRequest: updated });
 });
 
@@ -158,6 +203,13 @@ export const startMaintenanceWork = asyncHandler(async (req: Request, res: Respo
     where: { id },
     data: { status: "IN_PROGRESS" },
     select: maintenanceSelect,
+  });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_MAINTENANCE_REQUEST",
+    entityType: "MaintenanceRequest",
+    entityId: id,
+    metadata: { assetTag: request.asset.assetTag, change: "started" },
   });
   res.json({ maintenanceRequest: updated });
 });
@@ -175,5 +227,12 @@ export const resolveMaintenanceRequest = asyncHandler(async (req: Request, res: 
   ]);
 
   const updated = await prisma.maintenanceRequest.findUnique({ where: { id }, select: maintenanceSelect });
+  await logActivity({
+    userId: req.user!.id,
+    action: "UPDATE_MAINTENANCE_REQUEST",
+    entityType: "MaintenanceRequest",
+    entityId: id,
+    metadata: { assetTag: request.asset.assetTag, change: "resolved" },
+  });
   res.json({ maintenanceRequest: updated });
 });

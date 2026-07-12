@@ -7,6 +7,24 @@ async function main() {
 
   console.log("🌱 Seeding database...");
 
+  await prisma.$executeRawUnsafe(`
+    TRUNCATE TABLE
+      "ActivityLog",
+      "Notification",
+      "AuditItem",
+      "AuditCycleAuditor",
+      "AuditCycle",
+      "MaintenanceRequest",
+      "Booking",
+      "AllocationRequest",
+      "Allocation",
+      "Asset",
+      "AssetCategory",
+      "User",
+      "Department"
+    RESTART IDENTITY CASCADE;
+  `);
+
   /*
   =====================================
   PASSWORD
