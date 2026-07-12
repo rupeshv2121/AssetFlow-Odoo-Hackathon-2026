@@ -15,11 +15,17 @@ const summarySelect = {
   _count: { select: { employees: true } },
 } as const;
 
-async function assertValidHead(headId: string) {
-  const head = await prisma.user.findUnique({ where: { id: headId } });
+async function assertValidHead(headId: string, tx: any) {
+  const head = await tx.user.findUnique({ where: { id: headId } });
   if (!head) throw new AppError(400, "headId does not refer to an existing user");
-  if (head.role !== "DEPARTMENT_HEAD") {
-    throw new AppError(400, "The selected user must already hold the Department Head role — promote them from the Employee Directory first");
+  if (head.status !== "ACTIVE") {
+    throw new AppError(400, "The selected user must be active");
+  }
+  if (head.role !== "DEPARTMENT_HEAD" && head.role !== "ADMIN") {
+    await tx.user.update({
+      where: { id: headId },
+      data: { role: "DEPARTMENT_HEAD" },
+    });
   }
 }
 
@@ -40,12 +46,14 @@ export const listDepartments = asyncHandler(async (_req: Request, res: Response)
 export const createDepartment = asyncHandler(async (req: Request, res: Response) => {
   const { name, headId, parentId } = createDepartmentSchema.parse(req.body);
 
-  if (headId) await assertValidHead(headId);
   if (parentId) await assertValidParent(parentId);
 
-  const department = await prisma.department.create({
-    data: { name, headId, parentId },
-    select: summarySelect,
+  const department = await prisma.$transaction(async (tx) => {
+    if (headId) await assertValidHead(headId, tx);
+    return tx.department.create({
+      data: { name, headId, parentId },
+      select: summarySelect,
+    });
   });
   res.status(201).json({ department });
 });
@@ -57,13 +65,15 @@ export const updateDepartment = asyncHandler(async (req: Request, res: Response)
   const existing = await prisma.department.findUnique({ where: { id } });
   if (!existing) throw new AppError(404, "Department not found");
 
-  if (input.headId) await assertValidHead(input.headId);
   if (input.parentId) await assertValidParent(input.parentId, id);
 
-  const department = await prisma.department.update({
-    where: { id },
-    data: input,
-    select: summarySelect,
+  const department = await prisma.$transaction(async (tx) => {
+    if (input.headId) await assertValidHead(input.headId, tx);
+    return tx.department.update({
+      where: { id },
+      data: input,
+      select: summarySelect,
+    });
   });
   res.json({ department });
 });
