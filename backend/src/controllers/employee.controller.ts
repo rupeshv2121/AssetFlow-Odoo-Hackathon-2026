@@ -85,6 +85,17 @@ export const promoteEmployee = asyncHandler(async (req: Request, res: Response) 
       await tx.department.updateMany({ where: { headId: id }, data: { headId: null } });
     } else if (role === "DEPARTMENT_HEAD" && existing.departmentId) {
       // If promoted to DEPARTMENT_HEAD and they have a department, set them as head of that department
+      // But first, demote the previous head of this department to EMPLOYEE
+      const dept = await tx.department.findUnique({
+        where: { id: existing.departmentId },
+        select: { headId: true },
+      });
+      if (dept && dept.headId && dept.headId !== id) {
+        await tx.user.update({
+          where: { id: dept.headId },
+          data: { role: "EMPLOYEE" },
+        });
+      }
       await tx.department.update({
         where: { id: existing.departmentId },
         data: { headId: id },

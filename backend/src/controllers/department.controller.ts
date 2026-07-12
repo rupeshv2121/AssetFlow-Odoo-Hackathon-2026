@@ -50,7 +50,14 @@ export const createDepartment = asyncHandler(async (req: Request, res: Response)
   if (parentId) await assertValidParent(parentId);
 
   const department = await prisma.$transaction(async (tx) => {
-    if (headId) await assertValidHead(headId, tx);
+    if (headId) {
+      // Clear relationship if they headed another department
+      await tx.department.updateMany({
+        where: { headId },
+        data: { headId: null },
+      });
+      await assertValidHead(headId, tx);
+    }
     return tx.department.create({
       data: { name, headId, parentId },
       select: summarySelect,
@@ -76,7 +83,27 @@ export const updateDepartment = asyncHandler(async (req: Request, res: Response)
   if (input.parentId) await assertValidParent(input.parentId, id);
 
   const department = await prisma.$transaction(async (tx) => {
-    if (input.headId) await assertValidHead(input.headId, tx);
+    if (input.headId) {
+      // Clear relationship if they headed another department
+      await tx.department.updateMany({
+        where: { headId: input.headId, NOT: { id } },
+        data: { headId: null },
+      });
+      // Demote previous head of this department to EMPLOYEE
+      if (existing.headId && existing.headId !== input.headId) {
+        await tx.user.update({
+          where: { id: existing.headId },
+          data: { role: "EMPLOYEE" },
+        });
+      }
+      await assertValidHead(input.headId, tx);
+    } else if (input.headId === null && existing.headId) {
+      // Demote previous head if explicitly setting to null
+      await tx.user.update({
+        where: { id: existing.headId },
+        data: { role: "EMPLOYEE" },
+      });
+    }
     return tx.department.update({
       where: { id },
       data: input,
