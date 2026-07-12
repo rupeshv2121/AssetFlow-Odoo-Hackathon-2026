@@ -10,6 +10,8 @@ import OrgSetup from "@/pages/OrgSetup";
 import Landing from "@/pages/Landing";
 import AssetDirectory from "@/pages/AssetDirectory";
 import AssetDetail from "@/pages/AssetDetail";
+import AssetAllocation from "@/pages/AssetAllocation";
+import AllocationRequests from "@/pages/AllocationRequests";
 import Placeholder from "@/pages/placeholders/Placeholder";
 
 export default function AppRoutes() {
@@ -29,8 +31,6 @@ export default function AppRoutes() {
           <Route path="/assets/:id" element={<AssetDetail />} />
 
           {/* Placeholder routes for role-based sidebar modules */}
-          <Route path="/allocations" element={<Placeholder title="Asset Allocation" />} />
-          <Route path="/transfers" element={<Placeholder title="Transfer Requests" />} />
           <Route path="/bookings" element={<Placeholder title="Resource Booking" />} />
           <Route path="/maintenance" element={<Placeholder title="Maintenance" />} />
           <Route path="/audit-logs" element={<Placeholder title="Audit Logs" />} />
@@ -39,16 +39,18 @@ export default function AppRoutes() {
           <Route path="/settings" element={<Placeholder title="Settings" />} />
           <Route path="/profile" element={<Placeholder title="Profile" />} />
 
-          <Route path="/assets/register" element={<Placeholder title="Register Asset" />} />
-          <Route path="/allocations/history" element={<Placeholder title="Allocation History" />} />
+          <Route path="/assets/register" element={<Navigate to="/assets" replace />} />
+          <Route path="/allocations" element={<AssetAllocation />} />
+          <Route path="/allocations/history" element={<AssetAllocation />} />
           <Route path="/department/employees" element={<Placeholder title="Department Employees" />} />
-          <Route path="/department/assets" element={<Placeholder title="Department Assets" />} />
-          <Route path="/requests" element={<Placeholder title="Asset Requests" />} />
+          <Route path="/department/assets" element={<AssetAllocation />} />
+          <Route path="/transfers" element={<AllocationRequests />} />
+          <Route path="/requests" element={<AllocationRequests />} />
           <Route path="/reports/department" element={<Placeholder title="Department Reports" />} />
-          <Route path="/my-assets" element={<Placeholder title="My Assets" />} />
-          <Route path="/requests/transfer" element={<Placeholder title="Request Transfer" />} />
+          <Route path="/my-assets" element={<AssetAllocation />} />
+          <Route path="/requests/transfer" element={<AllocationRequests />} />
           <Route path="/requests/maintenance" element={<Placeholder title="Raise Maintenance" />} />
-          <Route path="/my-requests" element={<Placeholder title="My Requests" />} />
+          <Route path="/my-requests" element={<AllocationRequests />} />
 
           <Route element={<ProtectedRoute roles={["ADMIN"]} />}>
             <Route path="/org-setup" element={<OrgSetup />} />
