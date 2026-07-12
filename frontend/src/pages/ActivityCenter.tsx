@@ -198,7 +198,7 @@ export default function ActivityCenter() {
             </div>
           </div>
 
-          <div className="mt-6 grid grid-cols-1 gap-6 xl:grid-cols-2">
+          <div className="mt-6 space-y-6">
             <Section
               title={`Notifications${data.scope === "organization" ? "" : ` (${data.scope})`}`}
               icon={Bell}
