@@ -121,8 +121,8 @@ export default function AssetAudit() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-6 grid grid-cols-2 gap-3 rounded-md border border-gray-200 bg-gray-50 p-4">
-          <div className="col-span-2">
+        <form onSubmit={handleSubmit} className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-md border border-gray-200 bg-gray-50 p-4">
+          <div className="sm:col-span-2">
             <label className="mb-1 block text-sm font-medium text-gray-700">Name</label>
             <input
               required
@@ -200,7 +200,7 @@ export default function AssetAudit() {
             />
           </div>
 
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <label className="mb-1 block text-sm font-medium text-gray-700">
               Auditors <span className="text-gray-400">(select one or more)</span>
             </label>
@@ -223,9 +223,9 @@ export default function AssetAudit() {
             </div>
           </div>
 
-          {formError && <p className="col-span-2 text-sm text-red-600">{formError}</p>}
+          {formError && <p className="sm:col-span-2 text-sm text-red-600">{formError}</p>}
 
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <button
               type="submit"
               disabled={isSubmitting}

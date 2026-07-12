@@ -35,9 +35,9 @@ export default function MaintenanceManagement() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const [showForm, setShowForm] = useState(Boolean(preselectAssetId));
+  const [showForm, setShowForm] = useState(Boolean(preselectAssetId) && user?.role !== "ADMIN");
   const [form, setForm] = useState(() =>
-    preselectAssetId ? { ...emptyForm, assetId: preselectAssetId } : emptyForm
+    preselectAssetId && user?.role !== "ADMIN" ? { ...emptyForm, assetId: preselectAssetId } : emptyForm
   );
   const [formError, setFormError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -112,17 +112,19 @@ export default function MaintenanceManagement() {
           <h1 className="text-xl font-semibold text-gray-900">Maintenance Management</h1>
           <p className="text-sm text-gray-500">Route repairs through approval before work starts.</p>
         </div>
-        <button
-          onClick={() => setShowForm((s) => !s)}
-          className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
-        >
-          {showForm ? "Cancel" : "Raise Request"}
-        </button>
+        {user?.role !== "ADMIN" && (
+          <button
+            onClick={() => setShowForm((s) => !s)}
+            className="rounded-md bg-gray-900 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800"
+          >
+            {showForm ? "Cancel" : "Raise Request"}
+          </button>
+        )}
       </div>
 
-      {showForm && (
-        <form onSubmit={handleSubmit} className="mb-6 grid grid-cols-2 gap-3 rounded-md border border-gray-200 bg-gray-50 p-4">
-          <div className="col-span-2">
+      {showForm && user?.role !== "ADMIN" && (
+        <form onSubmit={handleSubmit} className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-md border border-gray-200 bg-gray-50 p-4">
+          <div className="sm:col-span-2">
             <label className="mb-1 block text-sm font-medium text-gray-700">Asset</label>
             <select
               required
@@ -138,7 +140,7 @@ export default function MaintenanceManagement() {
               ))}
             </select>
           </div>
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <label className="mb-1 block text-sm font-medium text-gray-700">Describe the issue</label>
             <textarea
               required
@@ -164,9 +166,9 @@ export default function MaintenanceManagement() {
             </select>
           </div>
 
-          {formError && <p className="col-span-2 text-sm text-red-600">{formError}</p>}
+          {formError && <p className="sm:col-span-2 text-sm text-red-600">{formError}</p>}
 
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <button
               type="submit"
               disabled={isSubmitting}
