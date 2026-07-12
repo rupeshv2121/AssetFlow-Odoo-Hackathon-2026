@@ -18,6 +18,7 @@ import ReportsAnalytics from "@/pages/ReportsAnalytics";
 import ActivityCenter from "@/pages/ActivityCenter";
 import AssetAudit from "@/pages/AssetAudit";
 import AuditCycleDetail from "@/pages/AuditCycleDetail";
+import DepartmentEmployees from "@/pages/DepartmentEmployees";
 import Placeholder from "@/pages/placeholders/Placeholder";
 
 export default function AppRoutes() {
@@ -50,7 +51,7 @@ export default function AppRoutes() {
           <Route path="/assets/register" element={<Navigate to="/assets" replace />} />
           <Route path="/allocations" element={<AssetAllocation />} />
           <Route path="/allocations/history" element={<AssetAllocation />} />
-          <Route path="/department/employees" element={<Placeholder title="Department Employees" />} />
+          <Route path="/department/employees" element={<DepartmentEmployees />} />
           <Route path="/department/assets" element={<AssetAllocation />} />
           <Route path="/transfers" element={<AllocationRequests />} />
           <Route path="/requests" element={<AllocationRequests />} />
