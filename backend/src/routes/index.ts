@@ -9,6 +9,7 @@ import allocationRoutes from "@/routes/allocation.routes";
 import allocationRequestRoutes from "@/routes/allocationRequest.routes";
 import bookingRoutes from "@/routes/booking.routes";
 import maintenanceRoutes from "@/routes/maintenance.routes";
+import reportsRoutes from "@/routes/reports.routes";
 
 const router = Router();
 
@@ -22,6 +23,7 @@ router.use("/allocations", allocationRoutes);
 router.use("/allocation-requests", allocationRequestRoutes);
 router.use("/bookings", bookingRoutes);
 router.use("/maintenance", maintenanceRoutes);
+router.use("/reports", reportsRoutes);
 
 // Other devs: mount your module's router here, e.g.
 // router.use("/audits", auditRoutes);
