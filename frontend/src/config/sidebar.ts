@@ -69,7 +69,6 @@ export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
     { key: "resourceBooking", title: "Resource Booking", path: "/bookings" },
     { key: "maintenance", title: "Maintenance", path: "/maintenance" },
     { key: "assetAudit", title: "Asset Audit", path: "/audits" },
-    { key: "auditLogs", title: "Audit Logs", path: "/audit-logs" },
     { key: "reports", title: "Reports & Analytics", path: "/reports" },
     { key: "settings", title: "Settings", path: "/settings" },
   ],

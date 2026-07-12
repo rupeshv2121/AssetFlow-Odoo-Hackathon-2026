@@ -15,6 +15,14 @@ const statusColor: Record<string, string> = {
   RETURNED: "bg-gray-100 text-gray-500",
 };
 
+function formatDate(dateInput: string | Date) {
+  const date = new Date(dateInput);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
 const emptyForm = { assetId: "", targetType: "employee" as "employee" | "department", targetId: "", expectedReturnDate: "" };
 
 export default function AssetAllocation() {
@@ -67,6 +75,17 @@ export default function AssetAllocation() {
     setFormError(null);
     setIsSubmitting(true);
     try {
+      if (form.expectedReturnDate) {
+        const expected = new Date(form.expectedReturnDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        expected.setHours(0, 0, 0, 0);
+        if (expected < today) {
+          setFormError("Expected return date cannot be before the allocated date");
+          setIsSubmitting(false);
+          return;
+        }
+      }
       await allocationService.createAllocation({
         assetId: form.assetId,
         employeeId: form.targetType === "employee" ? form.targetId : undefined,
@@ -145,6 +164,7 @@ export default function AssetAllocation() {
             <label className="mb-1 block text-sm font-medium text-gray-700">Expected Return Date</label>
             <input
               type="date"
+              min={new Date().toISOString().split("T")[0]}
               value={form.expectedReturnDate}
               onChange={(e) => setForm({ ...form, expectedReturnDate: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
@@ -222,9 +242,9 @@ export default function AssetAllocation() {
                       </Link>
                     </td>
                     <td className="px-4 py-2 text-gray-600">{a.employee?.name || a.department?.name || "—"}</td>
-                    <td className="px-4 py-2 text-gray-600">{new Date(a.allocatedAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-2 text-gray-600">{formatDate(a.allocatedAt)}</td>
                     <td className="px-4 py-2 text-gray-600">
-                      {a.expectedReturnDate ? new Date(a.expectedReturnDate).toLocaleDateString() : "—"}
+                      {a.expectedReturnDate ? formatDate(a.expectedReturnDate) : "—"}
                     </td>
                     <td className="px-4 py-2">
                       <span className={`rounded-full px-2 py-0.5 text-xs font-medium ${statusColor[a.status]}`}>

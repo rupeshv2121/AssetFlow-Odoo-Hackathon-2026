@@ -57,6 +57,16 @@ export const createAllocation = asyncHandler(async (req: Request, res: Response)
   const asset = await prisma.asset.findUnique({ where: { id: input.assetId } });
   if (!asset) throw new AppError(404, "Asset not found");
 
+  if (input.expectedReturnDate) {
+    const expected = new Date(input.expectedReturnDate);
+    const allocated = new Date();
+    allocated.setHours(0, 0, 0, 0);
+    expected.setHours(0, 0, 0, 0);
+    if (expected < allocated) {
+      throw new AppError(400, "Expected return date cannot be before the allocated date");
+    }
+  }
+
   const existing = await prisma.allocation.findFirst({
     where: { assetId: asset.id, status: HELD_STATUSES },
     include: { employee: { select: { name: true } }, department: { select: { name: true } } },
