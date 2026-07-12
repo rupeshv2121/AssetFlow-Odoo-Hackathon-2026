@@ -15,6 +15,7 @@ import AllocationRequests from "@/pages/AllocationRequests";
 import ResourceBooking from "@/pages/ResourceBooking";
 import MaintenanceManagement from "@/pages/MaintenanceManagement";
 import ReportsAnalytics from "@/pages/ReportsAnalytics";
+import ActivityCenter from "@/pages/ActivityCenter";
 import Placeholder from "@/pages/placeholders/Placeholder";
 
 export default function AppRoutes() {
@@ -36,9 +37,9 @@ export default function AppRoutes() {
           {/* Placeholder routes for role-based sidebar modules */}
           <Route path="/bookings" element={<ResourceBooking />} />
           <Route path="/maintenance" element={<MaintenanceManagement />} />
-          <Route path="/audit-logs" element={<Placeholder title="Audit Logs" />} />
+          <Route path="/audit-logs" element={<ActivityCenter />} />
           <Route path="/reports" element={<ReportsAnalytics />} />
-          <Route path="/notifications" element={<Placeholder title="Notifications" />} />
+          <Route path="/notifications" element={<ActivityCenter />} />
           <Route path="/settings" element={<Placeholder title="Settings" />} />
           <Route path="/profile" element={<Placeholder title="Profile" />} />
 
