@@ -1,10 +1,13 @@
 import { useCallback, useEffect, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import * as assetService from "@/services/assetService";
+import * as allocationService from "@/services/allocationService";
+import * as allocationRequestService from "@/services/allocationRequestService";
 import { useAuth } from "@/context/AuthContext";
 import { AssetDetail as AssetDetailType } from "@/types/asset";
 
 const MANUAL_STATUSES = ["AVAILABLE", "LOST", "RETIRED", "DISPOSED"] as const;
+const HELD_STATUSES = ["ACTIVE", "RETURN_REQUESTED"];
 
 export default function AssetDetail() {
   const { id } = useParams<{ id: string }>();
@@ -16,6 +19,8 @@ export default function AssetDetail() {
   const [error, setError] = useState<string | null>(null);
   const [statusError, setStatusError] = useState<string | null>(null);
   const [isChangingStatus, setIsChangingStatus] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [isActing, setIsActing] = useState(false);
 
   const load = useCallback(async () => {
     if (!id) return;
@@ -45,6 +50,53 @@ export default function AssetDetail() {
       setStatusError(err?.response?.data?.message || "Failed to change status");
     } finally {
       setIsChangingStatus(false);
+    }
+  }
+
+  const currentHolder = asset?.allocations.find((a) => HELD_STATUSES.includes(a.status));
+  const isCurrentHolder = currentHolder?.employee?.id === user?.id;
+  const canRequest = user?.role === "EMPLOYEE" || user?.role === "DEPARTMENT_HEAD";
+
+  async function handleRequestAsset() {
+    if (!id) return;
+    setActionError(null);
+    setIsActing(true);
+    try {
+      await allocationRequestService.createAllocationRequest({ assetId: id, toEmployeeId: user!.id });
+      await load();
+    } catch (err: any) {
+      setActionError(err?.response?.data?.message || "Failed to submit request");
+    } finally {
+      setIsActing(false);
+    }
+  }
+
+  async function handleRequestReturn() {
+    if (!currentHolder) return;
+    setActionError(null);
+    setIsActing(true);
+    try {
+      await allocationService.requestReturn(currentHolder.id);
+      await load();
+    } catch (err: any) {
+      setActionError(err?.response?.data?.message || "Failed to request return");
+    } finally {
+      setIsActing(false);
+    }
+  }
+
+  async function handleMarkReturned() {
+    if (!currentHolder) return;
+    const returnCondition = window.prompt("Condition check-in notes (optional):") || undefined;
+    setActionError(null);
+    setIsActing(true);
+    try {
+      await allocationService.markReturned(currentHolder.id, returnCondition);
+      await load();
+    } catch (err: any) {
+      setActionError(err?.response?.data?.message || "Failed to mark as returned");
+    } finally {
+      setIsActing(false);
     }
   }
 
@@ -91,6 +143,85 @@ export default function AssetDetail() {
           <p className="text-gray-500">Bookable</p>
           <p className="font-medium text-gray-900">{asset.isBookable ? "Yes" : "No"}</p>
         </div>
+      </div>
+
+      <div className="mb-6 rounded-md border border-gray-200 bg-gray-50 p-4">
+        <p className="mb-2 text-sm font-medium text-gray-700">Allocation</p>
+
+        {currentHolder ? (
+          <div className="text-sm text-gray-700">
+            <p>
+              Currently held by{" "}
+              <span className="font-medium text-gray-900">
+                {currentHolder.employee?.name || currentHolder.department?.name}
+              </span>
+              {currentHolder.expectedReturnDate && (
+                <> — expected back {new Date(currentHolder.expectedReturnDate).toLocaleDateString()}</>
+              )}
+              {currentHolder.status === "RETURN_REQUESTED" && (
+                <span className="ml-2 rounded-full bg-amber-100 px-2 py-0.5 text-xs font-medium text-amber-700">
+                  Return requested
+                </span>
+              )}
+            </p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {isCurrentHolder && currentHolder.status === "ACTIVE" && (
+                <button
+                  disabled={isActing}
+                  onClick={handleRequestReturn}
+                  className="rounded-md border border-gray-300 bg-white px-3 py-1.5 text-xs font-medium text-gray-700 hover:bg-gray-100 disabled:opacity-50"
+                >
+                  Request Return
+                </button>
+              )}
+              {canManage && (
+                <button
+                  disabled={isActing}
+                  onClick={handleMarkReturned}
+                  className="rounded-md border border-emerald-300 bg-white px-3 py-1.5 text-xs font-medium text-emerald-700 hover:bg-emerald-50 disabled:opacity-50"
+                >
+                  Mark Returned
+                </button>
+              )}
+              {canRequest && !isCurrentHolder && (
+                <button
+                  disabled={isActing}
+                  onClick={handleRequestAsset}
+                  className="rounded-md border border-sky-300 bg-white px-3 py-1.5 text-xs font-medium text-sky-700 hover:bg-sky-50 disabled:opacity-50"
+                >
+                  Request Transfer to Me
+                </button>
+              )}
+            </div>
+          </div>
+        ) : asset.status === "AVAILABLE" ? (
+          <div className="text-sm text-gray-700">
+            <p className="text-gray-500">Not currently allocated.</p>
+            <div className="mt-3 flex flex-wrap gap-2">
+              {canManage && (
+                <Link
+                  to={`/allocations?assetId=${asset.id}`}
+                  className="rounded-md bg-gray-900 px-3 py-1.5 text-xs font-medium text-white hover:bg-gray-800"
+                >
+                  Allocate this asset
+                </Link>
+              )}
+              {canRequest && (
+                <button
+                  disabled={isActing}
+                  onClick={handleRequestAsset}
+                  className="rounded-md border border-sky-300 bg-white px-3 py-1.5 text-xs font-medium text-sky-700 hover:bg-sky-50 disabled:opacity-50"
+                >
+                  Request This Asset
+                </button>
+              )}
+            </div>
+          </div>
+        ) : (
+          <p className="text-sm text-gray-500">Not allocated — asset is {asset.status.replace("_", " ").toLowerCase()}.</p>
+        )}
+
+        {actionError && <p className="mt-2 text-sm text-red-600">{actionError}</p>}
       </div>
 
       {canManage && (
