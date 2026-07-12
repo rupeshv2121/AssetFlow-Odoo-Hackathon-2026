@@ -1,4 +1,6 @@
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
+import { CheckSquare, BarChart } from "lucide-react";
 import DashboardPreview from "@/components/DashboardPreview";
 
 export default function Hero() {
@@ -40,16 +42,40 @@ export default function Hero() {
           </p>
         </div>
 
-        <div className="relative order-first md:order-last">
-          <div className="pointer-events-none absolute -left-6 -top-6 z-10 hidden rounded-xl bg-white p-3 shadow-lg ring-1 ring-black/5 sm:block">
-            <div className="text-xs text-gray-400">Available</div>
-            <div className="mt-1 text-xl font-bold text-emerald-600">72%</div>
+        <div className="relative order-first md:order-last w-full h-[220px] xs:h-[260px] sm:h-[340px] md:h-[320px] lg:h-[420px] select-none">
+          <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 scale-[0.45] xs:scale-[0.55] sm:scale-[0.75] md:scale-[0.7] lg:scale-100 origin-center transition-all duration-300">
+            {/* Floating Badge: Available */}
+            <motion.div
+              animate={{ y: [0, -6, 0] }}
+              transition={{ repeat: Infinity, duration: 5, ease: "easeInOut" }}
+              className="pointer-events-none absolute -left-8 -top-8 z-10 rounded-2xl bg-white/90 backdrop-blur-md p-3.5 shadow-xl shadow-sky-100/60 border border-sky-100/40 ring-1 ring-black/5 flex items-center gap-3"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-emerald-50 text-emerald-600">
+                <CheckSquare size={16} />
+              </div>
+              <div>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Available</div>
+                <div className="text-lg font-extrabold text-emerald-600 leading-none mt-0.5">72%</div>
+              </div>
+            </motion.div>
+
+            {/* Floating Badge: Bookings */}
+            <motion.div
+              animate={{ y: [0, 6, 0] }}
+              transition={{ repeat: Infinity, duration: 6, ease: "easeInOut", delay: 0.5 }}
+              className="pointer-events-none absolute -bottom-8 -right-6 z-10 rounded-2xl bg-white/90 backdrop-blur-md p-3.5 shadow-xl shadow-sky-100/60 border border-sky-100/40 ring-1 ring-black/5 flex items-center gap-3"
+            >
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-sky-50 text-sky-600">
+                <BarChart size={16} />
+              </div>
+              <div>
+                <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider">Bookings this week</div>
+                <div className="text-lg font-extrabold text-sky-600 leading-none mt-0.5">64</div>
+              </div>
+            </motion.div>
+
+            <DashboardPreview />
           </div>
-          <div className="pointer-events-none absolute -bottom-6 -right-4 z-10 hidden rounded-xl bg-white px-4 py-3 shadow-lg ring-1 ring-black/5 sm:block">
-            <div className="text-xs text-gray-400">Bookings this week</div>
-            <div className="mt-1 text-xl font-bold text-sky-600">64</div>
-          </div>
-          <DashboardPreview />
         </div>
       </div>
     </section>

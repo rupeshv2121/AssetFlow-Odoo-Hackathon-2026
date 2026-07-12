@@ -62,7 +62,12 @@ async function generateAssetTag(): Promise<string> {
 
 // Admin/Asset Manager see everything. Department Head is scoped to assets
 // currently held by their department or by someone in it. Employee is scoped
-// to assets currently held by them personally.
+// to assets currently held by them personally. Bookable/shared resources
+// (rooms, vehicles, shared equipment) are exempt from that scoping in every
+// case — they're never individually allocated to anyone by design, so the
+// held-by-me/held-by-my-department filter would otherwise hide every
+// bookable resource from everyone but Admin/Asset Manager, defeating the
+// point of a shared resource.
 async function buildScopeFilter(req: Request): Promise<Prisma.AssetWhereInput> {
   const { role, id } = req.user!;
 
@@ -72,18 +77,75 @@ async function buildScopeFilter(req: Request): Promise<Prisma.AssetWhereInput> {
     const headed = await prisma.department.findMany({ where: { headId: id }, select: { id: true } });
     const departmentIds = headed.map((d) => d.id);
     return {
-      allocations: {
-        some: {
-          status: { in: [...HELD_STATUSES] },
-          OR: [{ departmentId: { in: departmentIds } }, { employee: { departmentId: { in: departmentIds } } }],
+      OR: [
+        { isBookable: true },
+        {
+          allocations: {
+            some: {
+              status: { in: [...HELD_STATUSES] },
+              OR: [{ departmentId: { in: departmentIds } }, { employee: { departmentId: { in: departmentIds } } }],
+            },
+          },
         },
-      },
+      ],
     };
   }
 
   // EMPLOYEE
   return {
-    allocations: { some: { status: { in: [...HELD_STATUSES] }, employeeId: id } },
+    OR: [{ isBookable: true }, { allocations: { some: { status: { in: [...HELD_STATUSES] }, employeeId: id } } }],
+  };
+}
+
+// Wider than buildScopeFilter on purpose: the directory list only shows what
+// you currently hold, but a single asset's detail page is also the legitimate
+// destination for "I raised a maintenance request on this", "I have a pending
+// transfer request for this asset someone else holds", "I used to hold this",
+// or "I've booked this resource" — none of which imply current possession.
+async function buildDetailScopeFilter(req: Request): Promise<Prisma.AssetWhereInput> {
+  const { role, id } = req.user!;
+
+  if (role === "ADMIN" || role === "ASSET_MANAGER") return {};
+
+  if (role === "DEPARTMENT_HEAD") {
+    const headed = await prisma.department.findMany({ where: { headId: id }, select: { id: true } });
+    const departmentIds = headed.map((d) => d.id);
+    return {
+      OR: [
+        { isBookable: true },
+        {
+          allocations: {
+            some: { OR: [{ departmentId: { in: departmentIds } }, { employee: { departmentId: { in: departmentIds } } }] },
+          },
+        },
+        { maintenanceRequests: { some: { raisedBy: { departmentId: { in: departmentIds } } } } },
+        {
+          allocationRequests: {
+            some: {
+              OR: [
+                { fromDepartmentId: { in: departmentIds } },
+                { toDepartmentId: { in: departmentIds } },
+                { fromEmployee: { departmentId: { in: departmentIds } } },
+                { toEmployee: { departmentId: { in: departmentIds } } },
+                { requestedBy: { departmentId: { in: departmentIds } } },
+              ],
+            },
+          },
+        },
+        { bookings: { some: { OR: [{ departmentId: { in: departmentIds } }, { bookedBy: { departmentId: { in: departmentIds } } }] } } },
+      ],
+    };
+  }
+
+  // EMPLOYEE
+  return {
+    OR: [
+      { isBookable: true },
+      { allocations: { some: { employeeId: id } } },
+      { maintenanceRequests: { some: { raisedById: id } } },
+      { allocationRequests: { some: { OR: [{ requestedById: id }, { fromEmployeeId: id }, { toEmployeeId: id }] } } },
+      { bookings: { some: { bookedById: id } } },
+    ],
   };
 }
 
@@ -110,7 +172,7 @@ export const listAssets = asyncHandler(async (req: Request, res: Response) => {
 
 export const getAsset = asyncHandler(async (req: Request, res: Response) => {
   const { id } = req.params;
-  const scope = await buildScopeFilter(req);
+  const scope = await buildDetailScopeFilter(req);
   if (Object.keys(scope).length > 0) {
     const inScope = await prisma.asset.findFirst({ where: { id, ...scope }, select: { id: true } });
     if (!inScope) throw new AppError(404, "Asset not found");

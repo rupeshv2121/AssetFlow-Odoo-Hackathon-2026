@@ -441,6 +441,8 @@ ALLOCATIONS
 =====================================
 */
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
 await prisma.allocation.createMany({
 
     data: [
@@ -449,21 +451,27 @@ await prisma.allocation.createMany({
             assetId: laptop1.id,
             employeeId: rahul.id,
             departmentId: engineeringDept!.id,
-            status: "ACTIVE"
+            status: "ACTIVE",
+            // Overdue on purpose — gives the Dashboard's Overdue Returns
+            // table and KPI real data to show instead of an empty state.
+            expectedReturnDate: new Date(Date.now() - 5 * DAY_MS)
         },
 
         {
             assetId: laptop2.id,
             employeeId: sneha.id,
             departmentId: engineeringDept!.id,
-            status: "ACTIVE"
+            status: "ACTIVE",
+            expectedReturnDate: new Date(Date.now() + 10 * DAY_MS)
         },
 
         {
             assetId: monitor.id,
             employeeId: arjun.id,
             departmentId: financeDept!.id,
-            status: "ACTIVE"
+            status: "ACTIVE",
+            // Also overdue — one overdue item per seeded department (Engineering, Finance)
+            expectedReturnDate: new Date(Date.now() - 2 * DAY_MS)
         }
 
     ]
