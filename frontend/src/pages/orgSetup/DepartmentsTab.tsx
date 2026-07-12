@@ -81,6 +81,12 @@ export default function DepartmentsTab({ departments, employees, refetch }: Prop
     refetch();
   }
 
+  async function handleActivate(id: string) {
+    if (!window.confirm("Activate this department?")) return;
+    await departmentService.updateDepartment(id, { status: "ACTIVE" });
+    refetch();
+  }
+
   return (
     <div>
       <div className="mb-4 flex items-center justify-between">
@@ -199,12 +205,19 @@ export default function DepartmentsTab({ departments, employees, refetch }: Prop
                   <button onClick={() => startEdit(d)} className="mr-3 text-sm text-gray-600 hover:underline">
                     Edit
                   </button>
-                  {d.status === "ACTIVE" && (
+                  {d.status === "ACTIVE" ? (
                     <button
                       onClick={() => handleDeactivate(d.id)}
                       className="text-sm text-red-600 hover:underline"
                     >
                       Deactivate
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => handleActivate(d.id)}
+                      className="text-sm text-green-600 hover:underline"
+                    >
+                      Activate
                     </button>
                   )}
                 </td>
