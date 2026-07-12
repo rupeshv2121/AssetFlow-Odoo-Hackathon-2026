@@ -29,6 +29,19 @@ export default function EmployeesTab({ employees, departments, refetch }: Props)
     }
   }
 
+  const handlePromoteDeptHead = async (emp: Employee) => {
+    if (emp.departmentId) {
+      const dept = departments.find((d) => d.id === emp.departmentId);
+      if (dept && dept.head && dept.head.id !== emp.id) {
+        const proceed = window.confirm(
+          `Department "${dept.name}" already has a head: "${dept.head.name}". Promoting "${emp.name}" will demote "${dept.head.name}" to Employee. Do you want to proceed?`
+        );
+        if (!proceed) return;
+      }
+    }
+    await withBusy(emp.id, () => employeeService.promoteEmployee(emp.id, "DEPARTMENT_HEAD"));
+  };
+
   return (
     <div>
       <h2 className="mb-4 text-lg font-semibold text-gray-900">Employee Directory</h2>
@@ -100,7 +113,7 @@ export default function EmployeesTab({ employees, departments, refetch }: Props)
                       <div className="flex gap-2">
                         <button
                           disabled={isBusy}
-                          onClick={() => withBusy(emp.id, () => employeeService.promoteEmployee(emp.id, "DEPARTMENT_HEAD"))}
+                          onClick={() => handlePromoteDeptHead(emp)}
                           className="text-xs font-medium text-gray-600 hover:underline disabled:opacity-50"
                         >
                           Dept Head

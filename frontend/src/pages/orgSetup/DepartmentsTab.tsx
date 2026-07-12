@@ -38,6 +38,20 @@ export default function DepartmentsTab({ departments, employees, refetch }: Prop
     setError(null);
     setIsSubmitting(true);
     try {
+      if (editingId) {
+        const dept = departments.find((d) => d.id === editingId);
+        if (dept && dept.head && form.headId && dept.head.id !== form.headId) {
+          const newHead = employees.find((emp) => emp.id === form.headId);
+          const proceed = window.confirm(
+            `"${dept.head.name}" is currently the head of "${dept.name}". Assigning "${newHead?.name || "the new head"}" will demote "${dept.head.name}" to Employee. Do you want to proceed?`
+          );
+          if (!proceed) {
+            setIsSubmitting(false);
+            return;
+          }
+        }
+      }
+
       const payload = {
         name: form.name,
         headId: form.headId || undefined,
