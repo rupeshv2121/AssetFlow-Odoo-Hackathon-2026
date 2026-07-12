@@ -12,6 +12,14 @@ const statusColor: Record<string, string> = {
   CLOSED: "bg-gray-100 text-gray-500",
 };
 
+function formatDate(dateInput: string | Date) {
+  const date = new Date(dateInput);
+  const day = String(date.getDate()).padStart(2, "0");
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const year = date.getFullYear();
+  return `${day}/${month}/${year}`;
+}
+
 const emptyForm = {
   name: "",
   scopeType: "none" as "none" | "department" | "location",
@@ -70,6 +78,13 @@ export default function AssetAudit() {
     setFormError(null);
     setIsSubmitting(true);
     try {
+      const start = new Date(form.startDate);
+      const end = new Date(form.endDate);
+      if (end < start) {
+        setFormError("End date cannot be before the start date");
+        setIsSubmitting(false);
+        return;
+      }
       await auditCycleService.createAuditCycle({
         name: form.name,
         scopeDepartmentId: form.scopeType === "department" ? form.scopeDepartmentId : undefined,
@@ -178,6 +193,7 @@ export default function AssetAudit() {
             <input
               type="date"
               required
+              min={form.startDate}
               value={form.endDate}
               onChange={(e) => setForm({ ...form, endDate: e.target.value })}
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
@@ -246,7 +262,7 @@ export default function AssetAudit() {
                     {c.scopeDepartment?.name || c.scopeLocation || "All assets"}
                   </td>
                   <td className="px-4 py-2 text-gray-600">
-                    {new Date(c.startDate).toLocaleDateString()} – {new Date(c.endDate).toLocaleDateString()}
+                    {formatDate(c.startDate)} – {formatDate(c.endDate)}
                   </td>
                   <td className="px-4 py-2 text-gray-600">{c.auditors.map((a) => a.auditor.name).join(", ")}</td>
                   <td className="px-4 py-2 text-gray-600">{c._count.items}</td>
