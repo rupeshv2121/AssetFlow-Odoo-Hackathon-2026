@@ -13,8 +13,8 @@ div.overflow-hidden:has(table) {
 
 /* Theme override: Change black buttons to match sidebar blue/indigo gradient */
 button.bg-gray-900, a.bg-gray-900 {
-  background: linear-gradient(to right, #0284c7, #4f46e5) !important;
+  background: #0369a1 !important;
 }
 button.hover\:bg-gray-800:hover, a.hover\:bg-gray-800:hover {
-  background: linear-gradient(to right, #0369a1, #4338ca) !important;
+  background: #075985 !important;
 }
