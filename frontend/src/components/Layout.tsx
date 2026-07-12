@@ -1,7 +1,8 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { Boxes, LogOut } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import SIDEBAR_ITEMS, { SIDEBAR_ICONS } from "@/config/sidebar";
+import { useState } from "react";
 
 const ROLE_LABEL: Record<string, string> = {
   ADMIN: "Admin",
