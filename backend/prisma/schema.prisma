@@ -1,0 +1,11 @@
+// Prisma schema — adapt models once the problem statement is known.
+// Keep the patterns below: UUID ids, timestamps, indexes, real relations.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
