@@ -1,25 +1,66 @@
-import { ReactNode } from "react";
+import {
+  LayoutDashboard,
+  Building2,
+  Users,
+  Tags,
+  Boxes,
+  PackagePlus,
+  Repeat2,
+  ArrowLeftRight,
+  CalendarClock,
+  Wrench,
+  ClipboardList,
+  BarChart3,
+  Bell,
+  Settings,
+  UserCircle,
+  History,
+  type LucideIcon,
+} from "lucide-react";
 
 export type MenuItem = {
   key: string;
   title: string;
   path?: string;
   children?: MenuItem[];
-  icon?: ReactNode;
+};
+
+// Looked up by key rather than embedded per-item so the menu tree above
+// stays plain data (keeps this file .ts, not .tsx).
+export const SIDEBAR_ICONS: Record<string, LucideIcon> = {
+  dashboard: LayoutDashboard,
+  organization: Building2,
+  departments: Building2,
+  employees: Users,
+  assetCategories: Tags,
+  assetInventory: Boxes,
+  registerAsset: PackagePlus,
+  assetAllocation: Repeat2,
+  transferRequests: ArrowLeftRight,
+  resourceBooking: CalendarClock,
+  maintenance: Wrench,
+  maintenanceRequests: Wrench,
+  auditLogs: ClipboardList,
+  reports: BarChart3,
+  notifications: Bell,
+  settings: Settings,
+  profile: UserCircle,
+  allocationHistory: History,
+  departmentEmployees: Users,
+  departmentAssets: Boxes,
+  assetRequests: ClipboardList,
+  departmentReports: BarChart3,
+  myAssets: Boxes,
+  requestTransfer: ArrowLeftRight,
+  raiseMaintenance: Wrench,
+  bookResources: CalendarClock,
+  myRequests: ClipboardList,
 };
 
 export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
   ADMIN: [
     { key: "dashboard", title: "Dashboard", path: "/dashboard" },
-    {
-      key: "organization",
-      title: "Organization",
-      children: [
-        { key: "departments", title: "Departments", path: "/org/departments" },
-        { key: "employees", title: "Employees", path: "/org/employees" },
-        { key: "assetCategories", title: "Asset Categories", path: "/org/asset-categories" },
-      ],
-    },
+    { key: "organization", title: "Organization", path: "/org-setup" },
     { key: "assetInventory", title: "Asset Inventory", path: "/assets" },
     { key: "assetAllocation", title: "Asset Allocation", path: "/allocations" },
     { key: "transferRequests", title: "Transfer Requests", path: "/transfers" },

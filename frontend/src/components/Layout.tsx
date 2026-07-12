@@ -1,77 +1,137 @@
-import { NavLink, Outlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Boxes, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import SIDEBAR_ITEMS from "@/config/sidebar";
+import SIDEBAR_ITEMS, { SIDEBAR_ICONS } from "@/config/sidebar";
+import { useState } from "react";
 
-// Role-based sidebar that renders menu items from a data-driven config.
+const ROLE_LABEL: Record<string, string> = {
+  ADMIN: "Admin",
+  ASSET_MANAGER: "Asset Manager",
+  DEPARTMENT_HEAD: "Department Head",
+  EMPLOYEE: "Employee",
+};
+
+function initials(name?: string) {
+  if (!name) return "?";
+  return name
+    .split(" ")
+    .map((p) => p[0])
+    .slice(0, 2)
+    .join("")
+    .toUpperCase();
+}
+
+function navLinkClass({ isActive }: { isActive: boolean }) {
+  return `flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+    isActive ? "bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
+  }`;
+}
+
 export default function Layout() {
   const { user, logout } = useAuth();
+  const location = useLocation();
 
   const role = user?.role ?? "EMPLOYEE";
   const menu = SIDEBAR_ITEMS[role] ?? SIDEBAR_ITEMS["EMPLOYEE"];
 
+  const [expanded, setExpanded] = useState<string[]>(() => {
+    // Automatically expand the section if a child is active
+    const initialExpanded: string[] = [];
+    menu.forEach((item) => {
+      if (item.children?.some((child) => location.pathname.startsWith((child.path || "").split("?")[0]))) {
+        initialExpanded.push(item.key);
+      }
+    });
+    return initialExpanded;
+  });
+
+  const toggleExpand = (key: string) => {
+    setExpanded((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    );
+  };
+
   return (
-    <div className="flex min-h-screen">
-      <aside className="w-56 shrink-0 border-r border-gray-200 bg-white p-4">
-        <p className="mb-6 text-lg font-semibold text-gray-900">AssetFlow</p>
+    <div className="flex min-h-screen bg-gray-50">
+      <aside className="flex w-60 shrink-0 flex-col border-r border-gray-100 bg-white p-4">
+        <div className="mb-6 flex items-center gap-2 px-1">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-indigo-600 text-white">
+            <Boxes size={16} />
+          </span>
+          <span className="text-base font-bold text-gray-900">AssetFlow</span>
+        </div>
 
-        <nav className="space-y-2">
-          {menu.map((item) => (
-            <div key={item.key}>
-              {item.path ? (
-                <NavLink
-                  to={item.path}
-                  className={({ isActive }) =>
-                    `block rounded-md px-3 py-2 text-sm font-medium ${
-                      isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"
-                    }`
-                  }
-                >
-                  {item.title}
-                </NavLink>
-              ) : (
-                <div className="px-3 py-2 text-sm font-medium text-gray-800">{item.title}</div>
-              )}
+        <nav className="flex-1 space-y-1 overflow-y-auto">
+          {menu.map((item) => {
+            const Icon = SIDEBAR_ICONS[item.key];
+            const isExpanded = expanded.includes(item.key);
 
-              {item.children && (
-                <div className="ml-2 mt-2 space-y-1">
-                  {item.children.map((c) => (
-                    <NavLink
-                      key={c.key}
-                      to={c.path || "#"}
-                      className={({ isActive }) =>
-                        `block rounded-md px-3 py-2 text-sm font-medium ${
-                          isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"
-                        }`
-                      }
-                    >
-                      {c.title}
-                    </NavLink>
-                  ))}
-                </div>
-              )}
-            </div>
-          ))}
+            return (
+              <div key={item.key}>
+                {item.path ? (
+                  <NavLink to={item.path} className={navLinkClass}>
+                    {Icon && <Icon size={16} />}
+                    {item.title}
+                  </NavLink>
+                ) : item.children ? (
+                  <button
+                    type="button"
+                    onClick={() => toggleExpand(item.key)}
+                    className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-400 hover:bg-gray-50"
+                  >
+                    <span className="flex items-center gap-2.5">
+                      {Icon && <Icon size={16} />}
+                      {item.title}
+                    </span>
+                    <ChevronDown size={14} className={`transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                  </button>
+                ) : (
+                  <div className="mt-3 px-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
+                    {item.title}
+                  </div>
+                )}
+
+                {item.children && isExpanded && (
+                  <div className="mt-1 space-y-1 pl-2">
+                    {item.children.map((c) => {
+                      const ChildIcon = SIDEBAR_ICONS[c.key];
+                      return (
+                        <NavLink key={c.key} to={c.path || "#"} className={navLinkClass}>
+                          {ChildIcon && <ChildIcon size={16} />}
+                          {c.title}
+                        </NavLink>
+                      );
+                    })}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </nav>
+
+        <button
+          onClick={logout}
+          className="mt-2 flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+        >
+          <LogOut size={16} />
+          Log out
+        </button>
       </aside>
 
       <div className="flex flex-1 flex-col">
-        <header className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-3">
-          <div />
-          <div className="flex items-center gap-3 text-sm">
-            <span className="text-gray-700">{user?.name}</span>
-            <span className="rounded-full bg-gray-100 px-2 py-0.5 text-xs font-medium text-gray-600">
-              {user?.role}
+        <header className="flex items-center justify-end border-b border-gray-100 bg-white px-6 py-3">
+          <div className="flex items-center gap-3">
+            <div className="text-right">
+              <div className="text-sm font-medium text-gray-900">{user?.name}</div>
+              <div className="text-xs text-gray-400">{ROLE_LABEL[role] || role}</div>
+            </div>
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-sky-100 to-indigo-100 text-xs font-semibold text-indigo-700">
+              {initials(user?.name)}
             </span>
-            <button
-              onClick={logout}
-              className="rounded-md border border-gray-300 px-3 py-1 text-sm text-gray-700 hover:bg-gray-50"
-            >
-              Log out
-            </button>
           </div>
         </header>
 
-        <main className="flex-1 bg-gray-50 p-6">
+        <main className="flex-1 p-6">
           <Outlet />
         </main>
       </div>

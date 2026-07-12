@@ -6,12 +6,17 @@ export async function listCategories(): Promise<AssetCategory[]> {
   return data.categories;
 }
 
-export async function createCategory(input: { name: string }): Promise<AssetCategory> {
+export interface CategoryInput {
+  name: string;
+  extraFields?: Record<string, string>;
+}
+
+export async function createCategory(input: CategoryInput): Promise<AssetCategory> {
   const { data } = await apiClient.post<{ category: AssetCategory }>("/categories", input);
   return data.category;
 }
 
-export async function updateCategory(id: string, input: { name: string }): Promise<AssetCategory> {
+export async function updateCategory(id: string, input: CategoryInput): Promise<AssetCategory> {
   const { data } = await apiClient.patch<{ category: AssetCategory }>(`/categories/${id}`, input);
   return data.category;
 }

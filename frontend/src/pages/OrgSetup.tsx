@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
+import { useSearchParams } from "react-router-dom";
 import * as departmentService from "@/services/departmentService";
 import * as categoryService from "@/services/categoryService";
 import * as employeeService from "@/services/employeeService";
@@ -8,9 +9,14 @@ import CategoriesTab from "@/pages/orgSetup/CategoriesTab";
 import EmployeesTab from "@/pages/orgSetup/EmployeesTab";
 
 type Tab = "departments" | "categories" | "employees";
+const VALID_TABS: Tab[] = ["departments", "categories", "employees"];
 
 export default function OrgSetup() {
-  const [tab, setTab] = useState<Tab>("departments");
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get("tab");
+  const tab: Tab = VALID_TABS.includes(tabParam as Tab) ? (tabParam as Tab) : "departments";
+  const setTab = (t: Tab) => setSearchParams({ tab: t });
+
   const [departments, setDepartments] = useState<Department[]>([]);
   const [categories, setCategories] = useState<AssetCategory[]>([]);
   const [employees, setEmployees] = useState<Employee[]>([]);
