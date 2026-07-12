@@ -17,7 +17,7 @@ export default function DepartmentsTab({ departments, employees, refetch }: Prop
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const eligibleHeads = employees.filter((e) => e.role === "DEPARTMENT_HEAD" && e.status === "ACTIVE");
+  const eligibleHeads = employees.filter((e) => e.status === "ACTIVE" && e.role !== "ADMIN");
 
   function startCreate() {
     setEditingId(null);
@@ -104,9 +104,13 @@ export default function DepartmentsTab({ departments, employees, refetch }: Prop
                 </option>
               ))}
             </select>
-            {eligibleHeads.length === 0 && (
+            {eligibleHeads.length === 0 ? (
+              <p className="mt-1 text-xs text-red-500">
+                No active employees available to be assigned.
+              </p>
+            ) : (
               <p className="mt-1 text-xs text-gray-500">
-                No one holds the Department Head role yet — promote someone from the Employees tab first.
+                Selecting an employee will automatically update their role to Department Head.
               </p>
             )}
           </div>
