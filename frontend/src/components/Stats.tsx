@@ -32,11 +32,23 @@ function Counter({ end, suffix = "", label }: { end: number; suffix?: string; la
 // history — this is a hackathon build with no production traffic yet.
 export default function Stats() {
   return (
-    <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
-      <Counter end={4} label="Role Types, Zero Self-Elevation" />
-      <Counter end={7} label="Core Workflows Covered" />
-      <Counter end={0} label="Double-Allocations, by Design" />
-      <Counter end={24} suffix="/7" label="Real-Time Visibility" />
-    </div>
+    <>
+      <div className="text-center">
+        <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
+          Built for Enterprise Asset Management
+        </h2>
+        <p className="mx-auto mt-3 max-w-xl text-sm text-gray-600">
+          Designed to simplify asset operations with secure workflows, role-based access, and complete lifecycle visibility across your organization.
+        </p>
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4 mt-6">
+        <Counter end={4} label="Role Types, Zero Self-Elevation" />
+        <Counter end={7} label="Core Workflows Covered" />
+        <Counter end={0} label="Double-Allocations, by Design" />
+        <Counter end={24} suffix="/7" label="Real-Time Visibility" />
+      </div>
+    </>
+    
   );
 }

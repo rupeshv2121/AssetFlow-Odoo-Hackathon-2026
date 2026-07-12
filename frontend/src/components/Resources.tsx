@@ -28,14 +28,23 @@ export default function Resources() {
         </p>
       </div>
 
-      <div className="mt-10 grid grid-cols-1 gap-6 md:grid-cols-3">
+      <div className="mt-6 grid grid-cols-1 gap-6 md:grid-cols-3">
         {TIPS.map(({ icon: Icon, title, desc }) => (
-          <div key={title} className="rounded-2xl bg-white p-6 shadow-sm ring-1 ring-gray-100">
-            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-indigo-600 text-white">
+          <div
+            key={title}
+            className="group rounded-2xl border border-gray-200 bg-white p-6 transition-all duration-300 hover:-translate-y-1 hover:border-sky-500 hover:shadow-xl"
+          >
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-sky-500 text-white transition-transform duration-300 group-hover:scale-110">
               <Icon size={18} />
             </div>
-            <h3 className="mt-4 text-sm font-semibold text-gray-900">{title}</h3>
-            <p className="mt-2 text-sm text-gray-600">{desc}</p>
+
+            <h3 className="mt-4 text-sm font-semibold text-gray-900 transition-colors duration-300 group-hover:text-sky-600">
+              {title}
+            </h3>
+
+            <p className="mt-2 text-sm text-gray-600">
+              {desc}
+            </p>
           </div>
         ))}
       </div>
