@@ -7,6 +7,23 @@ async function main() {
 
   console.log("🌱 Seeding database...");
 
+  console.log("🧹 Cleaning up old database records...");
+  await prisma.activityLog.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.auditItem.deleteMany();
+  await prisma.auditCycleAuditor.deleteMany();
+  await prisma.auditCycle.deleteMany();
+  await prisma.maintenanceRequest.deleteMany();
+  await prisma.booking.deleteMany();
+  await prisma.allocationRequest.deleteMany();
+  await prisma.allocation.deleteMany();
+  await prisma.asset.deleteMany();
+  await prisma.assetCategory.deleteMany();
+  await prisma.department.updateMany({ data: { headId: null } });
+  await prisma.user.deleteMany();
+  await prisma.department.deleteMany();
+  console.log("🧹 Database clean!");
+
   /*
   =====================================
   PASSWORD
