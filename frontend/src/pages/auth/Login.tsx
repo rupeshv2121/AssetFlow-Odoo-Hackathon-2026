@@ -32,7 +32,7 @@ export default function Login() {
       <Link
         to="/"
         aria-label="Back to home"
-        className="fixed left-4 top-4 z-50 inline-flex items-center gap-2 rounded-md bg-white/90 px-3 py-2 text-sm text-gray-700 shadow-sm backdrop-blur-sm hover:bg-white"
+        className="fixed left-4 top-4 z-50 inline-flex items-center gap-2 rounded-md bg-gray/30 px-3 py-2 text-sm text-gray-700 shadow-md backdrop-blur-md hover:bg-white"
       >
         <ArrowLeft size={16} />
         <span className="hidden sm:inline">Back</span>
@@ -40,9 +40,6 @@ export default function Login() {
       <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-xl font-semibold text-gray-900">AssetFlow</h1>
-          <Link to="/" className="text-sm text-gray-600 hover:text-sky-600">
-            Back to home
-          </Link>
         </div>
         <p className="mb-6 text-sm text-gray-500">Sign in to your account</p>
 
