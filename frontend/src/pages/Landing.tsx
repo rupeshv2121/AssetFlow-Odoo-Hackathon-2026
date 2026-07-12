@@ -1,29 +1,31 @@
 import NavBar from "@/components/NavBar";
 import Hero from "@/components/Hero";
-import Features from "@/components/Features";
+import FeatureBand from "@/components/FeatureBand";
+import SolutionsGrid from "@/components/SolutionsGrid";
 import Workflow from "@/components/Workflow";
 import Modules from "@/components/Modules";
 import Stats from "@/components/Stats";
 import WhyAssetFlow from "@/components/WhyAssetFlow";
+import Resources from "@/components/Resources";
 import Footer from "@/components/Footer";
 
 export default function Landing() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-white text-gray-900">
       <NavBar />
+      <Hero />
+      <FeatureBand />
 
       <main className="mx-auto max-w-7xl px-6 pb-24">
-        <Hero />
-
-        <section className="mt-16">
-          <Features />
+        <section className="mt-20">
+          <SolutionsGrid />
         </section>
 
         <section className="mt-20">
           <Workflow />
         </section>
 
-        <section className="mt-20">
+        <section id="modules" className="mt-20">
           <Modules />
         </section>
 
@@ -33,6 +35,10 @@ export default function Landing() {
 
         <section className="mt-20">
           <WhyAssetFlow />
+        </section>
+
+        <section className="mt-20">
+          <Resources />
         </section>
       </main>
 
