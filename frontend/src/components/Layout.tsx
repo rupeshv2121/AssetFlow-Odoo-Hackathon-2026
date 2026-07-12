@@ -28,9 +28,27 @@ function navLinkClass({ isActive }: { isActive: boolean }) {
 
 export default function Layout() {
   const { user, logout } = useAuth();
+  const location = useLocation();
 
   const role = user?.role ?? "EMPLOYEE";
   const menu = SIDEBAR_ITEMS[role] ?? SIDEBAR_ITEMS["EMPLOYEE"];
+
+  const [expanded, setExpanded] = useState<string[]>(() => {
+    // Automatically expand the section if a child is active
+    const initialExpanded: string[] = [];
+    menu.forEach(item => {
+      if (item.children?.some(child => location.pathname.startsWith(child.path || ''))) {
+        initialExpanded.push(item.key);
+      }
+    });
+    return initialExpanded;
+  });
+
+  const toggleExpand = (key: string) => {
+    setExpanded((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    );
+  };
 
   return (
     <div className="flex min-h-screen bg-gray-50">
