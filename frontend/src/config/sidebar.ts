@@ -60,15 +60,7 @@ export const SIDEBAR_ICONS: Record<string, LucideIcon> = {
 export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
   ADMIN: [
     { key: "dashboard", title: "Dashboard", path: "/dashboard" },
-    {
-      key: "organization",
-      title: "Organization",
-      children: [
-        { key: "departments", title: "Departments", path: "/org-setup?tab=departments" },
-        { key: "employees", title: "Employees", path: "/org-setup?tab=employees" },
-        { key: "assetCategories", title: "Asset Categories", path: "/org-setup?tab=categories" },
-      ],
-    },
+    { key: "organization", title: "Organization", path: "/org-setup" },
     { key: "assetInventory", title: "Asset Inventory", path: "/assets" },
     { key: "assetAllocation", title: "Asset Allocation", path: "/allocations" },
     { key: "transferRequests", title: "Transfer Requests", path: "/transfers" },
