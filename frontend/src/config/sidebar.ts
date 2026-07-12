@@ -76,12 +76,10 @@ export const SIDEBAR_ITEMS: Record<string, MenuItem[]> = {
   ASSET_MANAGER: [
     { key: "dashboard", title: "Dashboard", path: "/dashboard" },
     { key: "assetInventory", title: "Asset Inventory", path: "/assets" },
-    { key: "registerAsset", title: "Register Asset", path: "/assets/register" },
     { key: "assetAllocation", title: "Asset Allocation", path: "/allocations" },
     { key: "transferRequests", title: "Transfer Requests", path: "/transfers" },
     { key: "resourceBooking", title: "Resource Booking", path: "/bookings" },
     { key: "maintenanceRequests", title: "Maintenance Requests", path: "/maintenance" },
-    { key: "allocationHistory", title: "Allocation History", path: "/allocations/history" },
     { key: "notifications", title: "Notifications", path: "/notifications" },
     { key: "profile", title: "Profile", path: "/profile" },
   ],

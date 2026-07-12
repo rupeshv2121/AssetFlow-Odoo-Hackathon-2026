@@ -14,6 +14,8 @@ import AssetAllocation from "@/pages/AssetAllocation";
 import AllocationRequests from "@/pages/AllocationRequests";
 import ResourceBooking from "@/pages/ResourceBooking";
 import MaintenanceManagement from "@/pages/MaintenanceManagement";
+import ReportsAnalytics from "@/pages/ReportsAnalytics";
+import ActivityCenter from "@/pages/ActivityCenter";
 import Placeholder from "@/pages/placeholders/Placeholder";
 
 export default function AppRoutes() {
@@ -35,9 +37,9 @@ export default function AppRoutes() {
           {/* Placeholder routes for role-based sidebar modules */}
           <Route path="/bookings" element={<ResourceBooking />} />
           <Route path="/maintenance" element={<MaintenanceManagement />} />
-          <Route path="/audit-logs" element={<Placeholder title="Audit Logs" />} />
-          <Route path="/reports" element={<Placeholder title="Reports & Analytics" />} />
-          <Route path="/notifications" element={<Placeholder title="Notifications" />} />
+          <Route path="/audit-logs" element={<ActivityCenter />} />
+          <Route path="/reports" element={<ReportsAnalytics />} />
+          <Route path="/notifications" element={<ActivityCenter />} />
           <Route path="/settings" element={<Placeholder title="Settings" />} />
           <Route path="/profile" element={<Placeholder title="Profile" />} />
 
@@ -48,7 +50,7 @@ export default function AppRoutes() {
           <Route path="/department/assets" element={<AssetAllocation />} />
           <Route path="/transfers" element={<AllocationRequests />} />
           <Route path="/requests" element={<AllocationRequests />} />
-          <Route path="/reports/department" element={<Placeholder title="Department Reports" />} />
+          <Route path="/reports/department" element={<ReportsAnalytics />} />
           <Route path="/my-assets" element={<AssetAllocation />} />
           <Route path="/requests/transfer" element={<AllocationRequests />} />
           <Route path="/requests/maintenance" element={<MaintenanceManagement />} />
