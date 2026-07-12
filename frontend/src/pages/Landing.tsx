@@ -18,7 +18,7 @@ export default function Landing() {
         <Modules />
       </section>
 
-      <main className="max-w-7xl px-6 flex flex-col gap-6">
+      <main className="max-w-7xl px-6 flex flex-col gap-6 mx-auto">
         <section id="workflow" className="mt-20">
           <Workflow />
         </section>

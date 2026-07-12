@@ -8,6 +8,7 @@ import dashboardRoutes from "@/routes/dashboard.routes";
 import allocationRoutes from "@/routes/allocation.routes";
 import allocationRequestRoutes from "@/routes/allocationRequest.routes";
 import bookingRoutes from "@/routes/booking.routes";
+import maintenanceRoutes from "@/routes/maintenance.routes";
 
 const router = Router();
 
@@ -20,8 +21,9 @@ router.use("/dashboard", dashboardRoutes);
 router.use("/allocations", allocationRoutes);
 router.use("/allocation-requests", allocationRequestRoutes);
 router.use("/bookings", bookingRoutes);
+router.use("/maintenance", maintenanceRoutes);
 
 // Other devs: mount your module's router here, e.g.
-// router.use("/maintenance", maintenanceRoutes);
+// router.use("/audits", auditRoutes);
 
 export default router;

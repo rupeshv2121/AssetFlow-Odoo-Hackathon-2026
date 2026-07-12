@@ -10,7 +10,7 @@ const STEPS = [
 
 export default function Workflow() {
   return (
-    <div id="workflow">
+    <div id="workflow" className="mb-10">
       <div className="text-center">
         <h2 className="text-3xl font-extrabold text-gray-900 sm:text-4xl">
           Workflow

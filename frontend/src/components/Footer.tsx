@@ -19,7 +19,7 @@ export default function Footer() {
               </span>
             </div>
 
-            <p className="mt-3 max-w-xs text-sm leading-6 text-gray-200">
+            <p className="mt-3 max-w-xs font-semibold text-sm leading-6 text-gray-200">
               Enterprise Asset Management System built for the Odoo Hackathon.
               Manage assets, transfers, bookings and maintenance through one
               centralized ERP platform.
@@ -28,11 +28,11 @@ export default function Footer() {
 
           {/* Column 2 */}
           <div>
-            <h4 className="mb-4 text-base font-semibold text-white">
+            <h4 className="mb-4 text-base font-extrabold text-white">
               Quick Links
             </h4>
 
-            <ul className="space-y-2 text-sm text-gray-300">
+            <ul className="space-y-2 text-sm text-gray-300 font-bold">
               <li>
                 <Link to="/" className="hover:text-gray-200">
                   Home
@@ -67,11 +67,11 @@ export default function Footer() {
 
           {/* Column 3 */}
           <div>
-            <h4 className="mb-4 text-base font-semibold text-white">
+            <h4 className="mb-4 text-base font-extrabold text-white">
               Account
             </h4>
 
-            <ul className="space-y-2 text-sm text-gray-300">
+            <ul className="space-y-2 text-sm text-gray-300 font-bold">
               <li>
                 <Link to="/login" className="hover:text-gray-200">
                   Log In
@@ -99,7 +99,7 @@ export default function Footer() {
           </div>
 
         </div>
-        <div className="mt-8 border-t border-gray-100 pt-6 text-center text-sm text-gray-300">
+        <div className="mt-8 border-t font-semibold border-gray-100 pt-6 text-center text-sm text-gray-300">
           © {new Date().getFullYear()} AssetFlow
         </div>
       </div>

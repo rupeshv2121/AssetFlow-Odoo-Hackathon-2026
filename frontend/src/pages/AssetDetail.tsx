@@ -223,10 +223,18 @@ export default function AssetDetail() {
 
         {actionError && <p className="mt-2 text-sm text-red-600">{actionError}</p>}
 
-        {asset.isBookable && (
-          <div className="mt-3 border-t border-gray-200 pt-3">
-            <Link to={`/bookings?assetId=${asset.id}`} className="text-xs font-medium text-sky-600 hover:underline">
-              View booking calendar for this resource &rarr;
+        {(asset.isBookable || asset.status !== "RETIRED") && asset.status !== "DISPOSED" && (
+          <div className="mt-3 flex flex-wrap gap-4 border-t border-gray-200 pt-3">
+            {asset.isBookable && (
+              <Link to={`/bookings?assetId=${asset.id}`} className="text-xs font-medium text-sky-600 hover:underline">
+                View booking calendar for this resource &rarr;
+              </Link>
+            )}
+            <Link
+              to={`/maintenance?assetId=${asset.id}`}
+              className="text-xs font-medium text-amber-600 hover:underline"
+            >
+              Raise a maintenance request &rarr;
             </Link>
           </div>
         )}

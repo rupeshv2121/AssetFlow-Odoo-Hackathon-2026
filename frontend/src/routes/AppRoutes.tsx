@@ -13,6 +13,7 @@ import AssetDetail from "@/pages/AssetDetail";
 import AssetAllocation from "@/pages/AssetAllocation";
 import AllocationRequests from "@/pages/AllocationRequests";
 import ResourceBooking from "@/pages/ResourceBooking";
+import MaintenanceManagement from "@/pages/MaintenanceManagement";
 import Placeholder from "@/pages/placeholders/Placeholder";
 
 export default function AppRoutes() {
@@ -33,7 +34,7 @@ export default function AppRoutes() {
 
           {/* Placeholder routes for role-based sidebar modules */}
           <Route path="/bookings" element={<ResourceBooking />} />
-          <Route path="/maintenance" element={<Placeholder title="Maintenance" />} />
+          <Route path="/maintenance" element={<MaintenanceManagement />} />
           <Route path="/audit-logs" element={<Placeholder title="Audit Logs" />} />
           <Route path="/reports" element={<Placeholder title="Reports & Analytics" />} />
           <Route path="/notifications" element={<Placeholder title="Notifications" />} />
@@ -50,7 +51,7 @@ export default function AppRoutes() {
           <Route path="/reports/department" element={<Placeholder title="Department Reports" />} />
           <Route path="/my-assets" element={<AssetAllocation />} />
           <Route path="/requests/transfer" element={<AllocationRequests />} />
-          <Route path="/requests/maintenance" element={<Placeholder title="Raise Maintenance" />} />
+          <Route path="/requests/maintenance" element={<MaintenanceManagement />} />
           <Route path="/my-requests" element={<AllocationRequests />} />
 
           <Route element={<ProtectedRoute roles={["ADMIN"]} />}>

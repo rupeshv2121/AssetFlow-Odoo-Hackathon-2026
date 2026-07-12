@@ -120,6 +120,7 @@ model User {
   allocationRequestsApproved AllocationRequest[] @relation("AllocationRequestApprovedBy")
   bookingsMade         Booking[]            @relation("BookingUser")
   maintenanceRaised    MaintenanceRequest[] @relation("MaintenanceRaisedBy")
+  maintenanceApproved  MaintenanceRequest[] @relation("MaintenanceApprovedBy")
   auditCyclesCreated   AuditCycle[]         @relation("AuditCreatedBy")
   auditorAssignments   AuditCycleAuditor[]
   notifications        Notification[]
@@ -258,6 +259,7 @@ model MaintenanceRequest {
   photoUrl         String?
   status           MaintenanceStatus @default(PENDING)
   approvedById     String?
+  approvedBy       User?    @relation("MaintenanceApprovedBy", fields: [approvedById], references: [id])
   technicianName   String?
   resolvedAt       DateTime?
   createdAt        DateTime @default(now())

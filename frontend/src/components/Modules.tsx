@@ -30,8 +30,8 @@ function ModuleCard({ title, desc, Icon }: any) {
 
 export default function Modules() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-slate-900 via-indigo-950 to-slate-900 py-20">
-      <div className="text-center">
+    <section className="relative overflow-hidden bg-gradient-to-br from-sky-700 to-sky-900 py-20">
+      <div className="text-center  max-w-7xl mx-auto">
         <h2 className="text-3xl font-extrabold text-white sm:text-4xl">
           Our modules make a difference!
         </h2>
@@ -41,7 +41,7 @@ export default function Modules() {
         </p>
       </div>
 
-      <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 px-6">
+      <div className="mt-6 max-w-7xl mx-auto grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3 px-6">
         {MODULES.map((m) => (
           <ModuleCard key={m.title} title={m.title} desc={m.desc} Icon={m.icon} />
         ))}
