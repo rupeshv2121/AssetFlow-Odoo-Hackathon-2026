@@ -21,6 +21,28 @@ export default function Layout() {
           >
             Dashboard
           </NavLink>
+          <NavLink
+            to="/assets"
+            className={({ isActive }) =>
+              `block rounded-md px-3 py-2 text-sm font-medium ${
+                isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"
+              }`
+            }
+          >
+            Assets
+          </NavLink>
+          {user?.role === "ADMIN" && (
+            <NavLink
+              to="/org-setup"
+              className={({ isActive }) =>
+                `block rounded-md px-3 py-2 text-sm font-medium ${
+                  isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"
+                }`
+              }
+            >
+              Organization Setup
+            </NavLink>
+          )}
         </nav>
       </aside>
 

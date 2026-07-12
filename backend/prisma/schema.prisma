@@ -1,6 +1,4 @@
-// AssetFlow schema — draft for team review at hour 0. Lock after migration;
-// avoid concurrent edits (coordinate in chat before touching this file again).
-
+// AssetFlow schema — draft for team review
 generator client {
   provider = "prisma-client-js"
 }
@@ -208,9 +206,6 @@ model Allocation {
   @@index([employeeId])
 }
 
-// Covers both "request a fresh allocation" (from* fields null — asset is
-// currently Available) and "request a transfer" (from* fields set to the
-// current holder, derived from the asset's active Allocation).
 model AllocationRequest {
   id               String   @id @default(uuid())
   assetId          String
