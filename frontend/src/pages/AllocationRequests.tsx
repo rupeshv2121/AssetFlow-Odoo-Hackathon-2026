@@ -15,7 +15,7 @@ function targetLabel(r: AllocationRequestItem) {
 }
 
 function sourceLabel(r: AllocationRequestItem) {
-  return r.fromEmployee?.name || r.fromDepartment?.name || "Available";
+  return r.fromEmployee?.name || r.fromDepartment?.name || "Unclaimed";
 }
 
 export default function AllocationRequests() {
