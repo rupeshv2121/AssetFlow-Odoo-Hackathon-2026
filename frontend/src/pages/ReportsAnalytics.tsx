@@ -290,10 +290,6 @@ export default function ReportsAnalytics() {
             <EmptyRow>No bookings recorded yet.</EmptyRow>
           ) : (
             <div className="overflow-x-auto">
-              <div className="mb-3 flex justify-between text-xs text-gray-500 px-1">
-                <span>← Y-Axis: Days of Week</span>
-                <span>X-Axis: Hour of Day (0 - 23) →</span>
-              </div>
               <div className="inline-grid min-w-full grid-cols-[auto_repeat(24,minmax(20px,1fr))] gap-0.5 text-[10px]">
                 <div className="pr-2 text-right font-semibold text-gray-400">Days \ hr</div>
                 {Array.from({ length: 24 }, (_, h) => (
