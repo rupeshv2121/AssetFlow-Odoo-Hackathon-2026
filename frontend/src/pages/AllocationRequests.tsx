@@ -115,7 +115,7 @@ export default function AllocationRequests() {
                       </span>
                     </td>
                     {canApprove && (
-                      <td className="px-4 py-2 text-right">
+                      <td className="px-4 py-2">
                         {r.status === "REQUESTED" && (
                           <>
                             <button
