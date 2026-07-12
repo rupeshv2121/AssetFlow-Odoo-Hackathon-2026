@@ -1,5 +1,6 @@
 import { FormEvent, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 
 export default function Login() {
@@ -28,8 +29,21 @@ export default function Login() {
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50 px-4">
+      <Link
+        to="/"
+        aria-label="Back to home"
+        className="fixed left-4 top-4 z-50 inline-flex items-center gap-2 rounded-md bg-white/90 px-3 py-2 text-sm text-gray-700 shadow-sm backdrop-blur-sm hover:bg-white"
+      >
+        <ArrowLeft size={16} />
+        <span className="hidden sm:inline">Back</span>
+      </Link>
       <div className="w-full max-w-sm rounded-lg border border-gray-200 bg-white p-8 shadow-sm">
-        <h1 className="mb-1 text-xl font-semibold text-gray-900">AssetFlow</h1>
+        <div className="mb-4 flex items-center justify-between">
+          <h1 className="text-xl font-semibold text-gray-900">AssetFlow</h1>
+          <Link to="/" className="text-sm text-gray-600 hover:text-sky-600">
+            Back to home
+          </Link>
+        </div>
         <p className="mb-6 text-sm text-gray-500">Sign in to your account</p>
 
         <form onSubmit={handleSubmit} className="space-y-4">
