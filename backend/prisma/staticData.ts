@@ -283,9 +283,9 @@ async function main() {
         name: "HP EliteBook 840",
         categoryId: laptop.id,
         serialNumber: "HP840-2001",
-        location: "Engineering",
+        location: "IT Support",
         condition: "Good",
-        status: AssetStatus.AVAILABLE
+        status: AssetStatus.ALLOCATED
       },
 
       {
@@ -367,7 +367,7 @@ async function main() {
         name: "Canon Laser Printer",
         categoryId: printer.id,
         location: "HR",
-        status: AssetStatus.AVAILABLE
+        status: AssetStatus.ALLOCATED
       },
 
       {
@@ -406,6 +406,7 @@ const karan = users.find(u => u.email === "karan@assetflow.com")!;
 const aman = users.find(u => u.email === "aman@assetflow.com")!;
 const aditi = users.find(u => u.email === "aditi@assetflow.com")!;
 const isha = users.find(u => u.email === "isha@assetflow.com")!;
+const rohan = users.find(u => u.email === "rohan@assetflow.com")!;
 
 const engineeringDept = await prisma.department.findFirst({
     where: { name: "Engineering" }
@@ -423,6 +424,10 @@ const marketingDept = await prisma.department.findFirst({
     where: { name: "Marketing" }
 });
 
+const itDept = await prisma.department.findFirst({
+    where: { name: "IT Support" }
+});
+
 /*
 =====================================
 FETCH ASSETS
@@ -434,6 +439,8 @@ const assets = await prisma.asset.findMany();
 const laptop1 = assets.find(a => a.assetTag === "AF-001")!;
 const laptop2 = assets.find(a => a.assetTag === "AF-003")!;
 const monitor = assets.find(a => a.assetTag === "AF-006")!;
+const laptop3 = assets.find(a => a.assetTag === "AF-002")!;
+const printerAsset = assets.find(a => a.assetTag === "AF-011")!;
 
 /*
 =====================================
@@ -472,6 +479,24 @@ await prisma.allocation.createMany({
             status: "ACTIVE",
             // Also overdue — one overdue item per seeded department (Engineering, Finance)
             expectedReturnDate: new Date(Date.now() - 2 * DAY_MS)
+        },
+
+        {
+            assetId: laptop3.id,
+            employeeId: rohan.id,
+            departmentId: itDept!.id,
+            status: "ACTIVE",
+            expectedReturnDate: new Date(Date.now() + 15 * DAY_MS)
+        },
+
+        {
+            assetId: printerAsset.id,
+            employeeId: aditi.id,
+            departmentId: hrDept!.id,
+            status: "ACTIVE",
+            // Permanent office equipment — no expected return date on purpose,
+            // exercises the "no due date" rendering path (vs. overdue/on-track).
+            expectedReturnDate: null
         }
 
     ]
@@ -577,6 +602,57 @@ await prisma.allocationRequest.create({
         approvedById: managerUser.id,
 
         resolvedAt: new Date()
+
+    }
+
+});
+
+// Pending transfer out of HR into IT — gives the HR Department Head a live
+// "Pending Transfers" item to review/approve on their own dashboard.
+await prisma.allocationRequest.create({
+
+    data: {
+
+        assetId: printerAsset.id,
+
+        type: "TRANSFER",
+
+        requestedById: aditi.id,
+
+        fromEmployeeId: aditi.id,
+
+        toEmployeeId: rohan.id,
+
+        fromDepartmentId: hrDept!.id,
+
+        toDepartmentId: itDept!.id,
+
+        status: "REQUESTED"
+
+    }
+
+});
+
+// Fresh allocation claim on a still-unassigned available asset (AF-005),
+// so the "claim an available asset" flow can be exercised without first
+// needing to free one up.
+const dellMonitor = assets.find(a => a.assetTag === "AF-005")!;
+
+await prisma.allocationRequest.create({
+
+    data: {
+
+        assetId: dellMonitor.id,
+
+        type: "ALLOCATION",
+
+        requestedById: karan.id,
+
+        toEmployeeId: karan.id,
+
+        toDepartmentId: marketingDept!.id,
+
+        status: "REQUESTED"
 
     }
 
@@ -713,6 +789,203 @@ await prisma.booking.createMany({
 });
 
 console.log("✅ Bookings Created");
+
+/*
+=====================================
+MAINTENANCE REQUESTS
+=====================================
+*/
+
+const threeDaysAgo = new Date(Date.now() - 3 * DAY_MS);
+
+await prisma.maintenanceRequest.createMany({
+
+    data: [
+
+        {
+            // Matches AF-004's seeded UNDER_MAINTENANCE status.
+            assetId: assets.find(a => a.assetTag === "AF-004")!.id,
+            raisedById: rohan.id,
+            issueDescription: "Battery drains within 20 minutes, needs replacement",
+            priority: "HIGH",
+            status: "IN_PROGRESS",
+            approvedById: managerUser.id,
+            technicianName: "Ravi Kumar (IT Technician)"
+        },
+
+        {
+            // Left PENDING so Approve/Reject can be tested live.
+            assetId: laptop1.id,
+            raisedById: rahul.id,
+            issueDescription: "Trackpad occasionally unresponsive",
+            priority: "MEDIUM",
+            status: "PENDING"
+        },
+
+        {
+            // Left APPROVED so "Assign Technician" can be tested live.
+            assetId: laptop2.id,
+            raisedById: sneha.id,
+            issueDescription: "Minor scratch on lid, cosmetic only, requesting inspection",
+            priority: "LOW",
+            status: "APPROVED",
+            approvedById: managerUser.id
+        },
+
+        {
+            assetId: monitor.id,
+            raisedById: arjun.id,
+            issueDescription: "Flickering resolved after cable replacement",
+            priority: "MEDIUM",
+            status: "RESOLVED",
+            approvedById: managerUser.id,
+            technicianName: "External Vendor - ScreenFix",
+            resolvedAt: threeDaysAgo,
+            createdAt: new Date(Date.now() - 6 * DAY_MS)
+        },
+
+        {
+            assetId: assets.find(a => a.assetTag === "AF-009")!.id,
+            raisedById: rahul.id,
+            issueDescription: "Requesting a repaint — cosmetic only",
+            priority: "LOW",
+            status: "REJECTED",
+            approvedById: managerUser.id
+        },
+
+        {
+            // Left PENDING (CRITICAL) so it stands out in the approval queue.
+            assetId: assets.find(a => a.assetTag === "AF-012")!.id,
+            raisedById: karan.id,
+            issueDescription: "Engine warning light on dashboard, needs immediate inspection",
+            priority: "CRITICAL",
+            status: "PENDING"
+        }
+
+    ]
+
+});
+
+console.log("✅ Maintenance Requests Created");
+
+/*
+=====================================
+NOTIFICATIONS
+=====================================
+*/
+
+await prisma.notification.createMany({
+
+    data: [
+
+        {
+            userId: rahul.id,
+            type: "OVERDUE_RETURN",
+            message: "Your return for Dell Latitude 5440 (AF-001) is overdue",
+            relatedEntityType: "Asset",
+            relatedEntityId: laptop1.id,
+            isRead: false
+        },
+
+        {
+            userId: arjun.id,
+            type: "OVERDUE_RETURN",
+            message: "Your return for LG UltraWide Monitor (AF-006) is overdue",
+            relatedEntityType: "Asset",
+            relatedEntityId: monitor.id,
+            isRead: false
+        },
+
+        {
+            userId: sneha.id,
+            type: "MAINTENANCE_APPROVED",
+            message: "Your maintenance request for MacBook Pro M3 (AF-003) was approved",
+            relatedEntityType: "MaintenanceRequest",
+            isRead: true
+        },
+
+        {
+            userId: rahul.id,
+            type: "MAINTENANCE_REJECTED",
+            message: "Your maintenance request for Meeting Room Alpha (AF-009) was rejected",
+            relatedEntityType: "MaintenanceRequest",
+            isRead: true
+        },
+
+        {
+            userId: aditi.id,
+            type: "ASSET_ASSIGNED",
+            message: "You've been allocated Canon Laser Printer (AF-011)",
+            relatedEntityType: "Asset",
+            relatedEntityId: printerAsset.id,
+            isRead: true
+        },
+
+        {
+            userId: karan.id,
+            type: "BOOKING_CONFIRMED",
+            message: "Your booking for Toyota Innova (AF-012) is confirmed",
+            relatedEntityType: "Booking",
+            isRead: false
+        }
+
+    ]
+
+});
+
+console.log("✅ Notifications Created");
+
+/*
+=====================================
+ACTIVITY LOG
+=====================================
+*/
+
+await prisma.activityLog.createMany({
+
+    data: [
+
+        {
+            userId: adminUser.id,
+            action: "CREATE_ASSET",
+            entityType: "Asset",
+            entityId: printerAsset.id,
+            metadata: { assetTag: "AF-011", name: "Canon Laser Printer" }
+        },
+
+        {
+            userId: managerUser.id,
+            action: "APPROVE_MAINTENANCE_REQUEST",
+            entityType: "MaintenanceRequest",
+            metadata: { assetTag: "AF-006" }
+        },
+
+        {
+            userId: managerUser.id,
+            action: "REJECT_MAINTENANCE_REQUEST",
+            entityType: "MaintenanceRequest",
+            metadata: { assetTag: "AF-009" }
+        },
+
+        {
+            userId: managerUser.id,
+            action: "APPROVE_ALLOCATION_REQUEST",
+            entityType: "AllocationRequest",
+            metadata: { assetTag: "AF-003" }
+        },
+
+        {
+            userId: sneha.id,
+            action: "CREATE_BOOKING",
+            entityType: "Booking",
+            metadata: { assetTag: "AF-010" }
+        }
+
+    ]
+
+});
+
+console.log("✅ Activity Log Seeded");
 
 }
 
