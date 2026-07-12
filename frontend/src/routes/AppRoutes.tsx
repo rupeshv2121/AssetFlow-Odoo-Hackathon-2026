@@ -12,6 +12,7 @@ import AssetDirectory from "@/pages/AssetDirectory";
 import AssetDetail from "@/pages/AssetDetail";
 import AssetAllocation from "@/pages/AssetAllocation";
 import AllocationRequests from "@/pages/AllocationRequests";
+import ResourceBooking from "@/pages/ResourceBooking";
 import Placeholder from "@/pages/placeholders/Placeholder";
 
 export default function AppRoutes() {
@@ -31,7 +32,7 @@ export default function AppRoutes() {
           <Route path="/assets/:id" element={<AssetDetail />} />
 
           {/* Placeholder routes for role-based sidebar modules */}
-          <Route path="/bookings" element={<Placeholder title="Resource Booking" />} />
+          <Route path="/bookings" element={<ResourceBooking />} />
           <Route path="/maintenance" element={<Placeholder title="Maintenance" />} />
           <Route path="/audit-logs" element={<Placeholder title="Audit Logs" />} />
           <Route path="/reports" element={<Placeholder title="Reports & Analytics" />} />

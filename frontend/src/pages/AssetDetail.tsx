@@ -222,6 +222,14 @@ export default function AssetDetail() {
         )}
 
         {actionError && <p className="mt-2 text-sm text-red-600">{actionError}</p>}
+
+        {asset.isBookable && (
+          <div className="mt-3 border-t border-gray-200 pt-3">
+            <Link to={`/bookings?assetId=${asset.id}`} className="text-xs font-medium text-sky-600 hover:underline">
+              View booking calendar for this resource &rarr;
+            </Link>
+          </div>
+        )}
       </div>
 
       {canManage && (
