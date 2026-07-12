@@ -23,9 +23,8 @@ function initials(name?: string) {
 }
 
 function navLinkClass({ isActive }: { isActive: boolean }) {
-  return `flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-    isActive ? "bg-gradient-to-r from-sky-600 to-indigo-600 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
-  }`;
+  return `flex items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${isActive ? "bg-sky-700 text-white shadow-sm" : "text-gray-600 hover:bg-gray-100"
+    }`;
 }
 
 export default function Layout() {
@@ -77,7 +76,7 @@ export default function Layout() {
     <div className="flex min-h-screen bg-gray-50">
       <aside className="fixed inset-y-0 left-0 z-30 flex w-60 flex-col border-r border-gray-100 bg-white p-4">
         <div className="mb-6 flex items-center gap-2 px-1">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-sky-500 to-indigo-600 text-white">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-sky-700 text-white">
             <Boxes size={16} />
           </span>
           <span className="text-base font-bold text-gray-900">AssetFlow</span>
