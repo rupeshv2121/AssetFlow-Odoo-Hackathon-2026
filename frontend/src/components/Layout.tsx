@@ -1,48 +1,56 @@
 import { NavLink, Outlet } from "react-router-dom";
 import { useAuth } from "@/context/AuthContext";
+import SIDEBAR_ITEMS from "@/config/sidebar";
 
-// Placeholder shell so auth is demoable end-to-end. Dev C: replace with the
-// real sidebar nav (role-aware menu items) + topbar (notification bell) here.
+// Role-based sidebar that renders menu items from a data-driven config.
 export default function Layout() {
   const { user, logout } = useAuth();
+
+  const role = user?.role ?? "EMPLOYEE";
+  const menu = SIDEBAR_ITEMS[role] ?? SIDEBAR_ITEMS["EMPLOYEE"];
 
   return (
     <div className="flex min-h-screen">
       <aside className="w-56 shrink-0 border-r border-gray-200 bg-white p-4">
         <p className="mb-6 text-lg font-semibold text-gray-900">AssetFlow</p>
-        <nav className="space-y-1">
-          <NavLink
-            to="/dashboard"
-            className={({ isActive }) =>
-              `block rounded-md px-3 py-2 text-sm font-medium ${
-                isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"
-              }`
-            }
-          >
-            Dashboard
-          </NavLink>
-          <NavLink
-            to="/assets"
-            className={({ isActive }) =>
-              `block rounded-md px-3 py-2 text-sm font-medium ${
-                isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"
-              }`
-            }
-          >
-            Assets
-          </NavLink>
-          {user?.role === "ADMIN" && (
-            <NavLink
-              to="/org-setup"
-              className={({ isActive }) =>
-                `block rounded-md px-3 py-2 text-sm font-medium ${
-                  isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"
-                }`
-              }
-            >
-              Organization Setup
-            </NavLink>
-          )}
+
+        <nav className="space-y-2">
+          {menu.map((item) => (
+            <div key={item.key}>
+              {item.path ? (
+                <NavLink
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `block rounded-md px-3 py-2 text-sm font-medium ${
+                      isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"
+                    }`
+                  }
+                >
+                  {item.title}
+                </NavLink>
+              ) : (
+                <div className="px-3 py-2 text-sm font-medium text-gray-800">{item.title}</div>
+              )}
+
+              {item.children && (
+                <div className="ml-2 mt-2 space-y-1">
+                  {item.children.map((c) => (
+                    <NavLink
+                      key={c.key}
+                      to={c.path || "#"}
+                      className={({ isActive }) =>
+                        `block rounded-md px-3 py-2 text-sm font-medium ${
+                          isActive ? "bg-gray-900 text-white" : "text-gray-700 hover:bg-gray-100"
+                        }`
+                      }
+                    >
+                      {c.title}
+                    </NavLink>
+                  ))}
+                </div>
+              )}
+            </div>
+          ))}
         </nav>
       </aside>
 
