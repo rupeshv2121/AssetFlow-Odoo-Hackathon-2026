@@ -29,9 +29,6 @@ export default function AppRoutes() {
           <Route path="/assets/:id" element={<AssetDetail />} />
 
           {/* Placeholder routes for role-based sidebar modules */}
-          <Route path="/org/departments" element={<Placeholder title="Departments" />} />
-          <Route path="/org/employees" element={<Placeholder title="Employees" />} />
-          <Route path="/org/asset-categories" element={<Placeholder title="Asset Categories" />} />
           <Route path="/allocations" element={<Placeholder title="Asset Allocation" />} />
           <Route path="/transfers" element={<Placeholder title="Transfer Requests" />} />
           <Route path="/bookings" element={<Placeholder title="Resource Booking" />} />
