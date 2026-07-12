@@ -7,23 +7,22 @@ async function main() {
 
   console.log("🌱 Seeding database...");
 
-  await prisma.$executeRawUnsafe(`
-    TRUNCATE TABLE
-      "ActivityLog",
-      "Notification",
-      "AuditItem",
-      "AuditCycleAuditor",
-      "AuditCycle",
-      "MaintenanceRequest",
-      "Booking",
-      "AllocationRequest",
-      "Allocation",
-      "Asset",
-      "AssetCategory",
-      "User",
-      "Department"
-    RESTART IDENTITY CASCADE;
-  `);
+  console.log("🧹 Cleaning up old database records...");
+  await prisma.activityLog.deleteMany();
+  await prisma.notification.deleteMany();
+  await prisma.auditItem.deleteMany();
+  await prisma.auditCycleAuditor.deleteMany();
+  await prisma.auditCycle.deleteMany();
+  await prisma.maintenanceRequest.deleteMany();
+  await prisma.booking.deleteMany();
+  await prisma.allocationRequest.deleteMany();
+  await prisma.allocation.deleteMany();
+  await prisma.asset.deleteMany();
+  await prisma.assetCategory.deleteMany();
+  await prisma.department.updateMany({ data: { headId: null } });
+  await prisma.user.deleteMany();
+  await prisma.department.deleteMany();
+  console.log("🧹 Database clean!");
 
   /*
   =====================================
