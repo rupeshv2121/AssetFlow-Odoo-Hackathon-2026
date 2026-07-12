@@ -290,16 +290,20 @@ export default function ReportsAnalytics() {
             <EmptyRow>No bookings recorded yet.</EmptyRow>
           ) : (
             <div className="overflow-x-auto">
+              <div className="mb-3 flex justify-between text-xs text-gray-500 px-1">
+                <span>← Y-Axis: Days of Week</span>
+                <span>X-Axis: Hour of Day (0 - 23) →</span>
+              </div>
               <div className="inline-grid min-w-full grid-cols-[auto_repeat(24,minmax(20px,1fr))] gap-0.5 text-[10px]">
-                <div />
+                <div className="pr-2 text-right font-semibold text-gray-400">Days \ hr</div>
                 {Array.from({ length: 24 }, (_, h) => (
-                  <div key={h} className="text-center text-gray-400">
+                  <div key={h} className="text-center font-semibold text-gray-400">
                     {h}
                   </div>
                 ))}
                 {DAY_LABELS.map((day, dayIdx) => (
                   <Fragment key={day}>
-                    <div className="pr-2 text-right text-gray-500">{day}</div>
+                    <div className="pr-2 text-right font-semibold text-gray-500">{day}</div>
                     {data.bookingHeatmap.matrix[dayIdx].map((count, hourIdx) => (
                       <div
                         key={`${day}-${hourIdx}`}
@@ -307,7 +311,7 @@ export default function ReportsAnalytics() {
                         className="aspect-square rounded-sm"
                         style={{
                           backgroundColor:
-                            count === 0
+                             count === 0
                               ? "var(--heatmap-empty, #f3f4f6)"
                               : `rgba(14, 165, 233, ${0.15 + 0.85 * (count / data.bookingHeatmap.maxCount)})`,
                         }}
