@@ -1,5 +1,5 @@
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { Boxes, LogOut } from "lucide-react";
+import { Boxes, LogOut, ChevronDown } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import SIDEBAR_ITEMS, { SIDEBAR_ICONS } from "@/config/sidebar";
 import { useState } from "react";
@@ -37,8 +37,8 @@ export default function Layout() {
   const [expanded, setExpanded] = useState<string[]>(() => {
     // Automatically expand the section if a child is active
     const initialExpanded: string[] = [];
-    menu.forEach(item => {
-      if (item.children?.some(child => location.pathname.startsWith(child.path || ''))) {
+    menu.forEach((item) => {
+      if (item.children?.some((child) => location.pathname.startsWith((child.path || "").split("?")[0]))) {
         initialExpanded.push(item.key);
       }
     });
@@ -64,6 +64,8 @@ export default function Layout() {
         <nav className="flex-1 space-y-1 overflow-y-auto">
           {menu.map((item) => {
             const Icon = SIDEBAR_ICONS[item.key];
+            const isExpanded = expanded.includes(item.key);
+
             return (
               <div key={item.key}>
                 {item.path ? (
@@ -71,14 +73,26 @@ export default function Layout() {
                     {Icon && <Icon size={16} />}
                     {item.title}
                   </NavLink>
+                ) : item.children ? (
+                  <button
+                    type="button"
+                    onClick={() => toggleExpand(item.key)}
+                    className="flex w-full items-center justify-between rounded-lg px-3 py-2 text-xs font-semibold uppercase tracking-wide text-gray-400 hover:bg-gray-50"
+                  >
+                    <span className="flex items-center gap-2.5">
+                      {Icon && <Icon size={16} />}
+                      {item.title}
+                    </span>
+                    <ChevronDown size={14} className={`transition-transform ${isExpanded ? "rotate-180" : ""}`} />
+                  </button>
                 ) : (
                   <div className="mt-3 px-3 text-xs font-semibold uppercase tracking-wide text-gray-400">
                     {item.title}
                   </div>
                 )}
 
-                {item.children && (
-                  <div className="mt-1 space-y-1">
+                {item.children && isExpanded && (
+                  <div className="mt-1 space-y-1 pl-2">
                     {item.children.map((c) => {
                       const ChildIcon = SIDEBAR_ICONS[c.key];
                       return (
