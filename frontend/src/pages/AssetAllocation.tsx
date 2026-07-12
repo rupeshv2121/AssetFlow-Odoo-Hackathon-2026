@@ -143,7 +143,7 @@ export default function AssetAllocation() {
       </div>
 
       {showForm && (
-        <form onSubmit={handleSubmit} className="mb-6 grid grid-cols-2 gap-3 rounded-md border border-gray-200 bg-gray-50 p-4">
+        <form onSubmit={handleSubmit} className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-2 rounded-md border border-gray-200 bg-gray-50 p-4">
           <div>
             <label className="mb-1 block text-sm font-medium text-gray-700">Asset</label>
             <select
@@ -200,9 +200,9 @@ export default function AssetAllocation() {
             </select>
           </div>
 
-          {formError && <p className="col-span-2 text-sm text-red-600">{formError}</p>}
+          {formError && <p className="sm:col-span-2 text-sm text-red-600">{formError}</p>}
 
-          <div className="col-span-2">
+          <div className="sm:col-span-2">
             <button
               type="submit"
               disabled={isSubmitting}
