@@ -22,7 +22,7 @@ const priorityColor: Record<MaintenancePriority, string> = {
   CRITICAL: "bg-red-100 text-red-700",
 };
 
-const emptyForm = { assetId: "", issueDescription: "", priority: "MEDIUM" as MaintenancePriority, photoUrl: "" };
+const emptyForm = { assetId: "", issueDescription: "", priority: "MEDIUM" as MaintenancePriority };
 
 export default function MaintenanceManagement() {
   const { user } = useAuth();
@@ -43,6 +43,15 @@ export default function MaintenanceManagement() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
   const [actionError, setActionError] = useState<string | null>(null);
+
+  // Non-managers can only raise a request for something currently allocated to
+  // them (or their department) — not every bookable resource in the org, which
+  // the asset list also includes so Book Resources / Asset Directory can show
+  // them. A deep-linked preselected asset (from its detail page) is always kept
+  // so the dropdown still reflects what was actually chosen.
+  const assetOptions = canManage
+    ? assets
+    : assets.filter((a) => a.allocations.length > 0 || a.id === form.assetId);
 
   const load = useCallback(async () => {
     try {
@@ -72,7 +81,6 @@ export default function MaintenanceManagement() {
         assetId: form.assetId,
         issueDescription: form.issueDescription,
         priority: form.priority,
-        photoUrl: form.photoUrl || undefined,
       });
       setShowForm(false);
       setForm(emptyForm);
@@ -123,7 +131,7 @@ export default function MaintenanceManagement() {
               className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
             >
               <option value="">Select an asset...</option>
-              {assets.map((a) => (
+              {assetOptions.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.assetTag} — {a.name}
                 </option>
@@ -142,7 +150,7 @@ export default function MaintenanceManagement() {
               placeholder="Screen flickers intermittently, won't hold charge..."
             />
           </div>
-          <div>
+          <div className="col-span-2">
             <label className="mb-1 block text-sm font-medium text-gray-700">Priority</label>
             <select
               value={form.priority}
@@ -154,15 +162,6 @@ export default function MaintenanceManagement() {
               <option value="HIGH">High</option>
               <option value="CRITICAL">Critical</option>
             </select>
-          </div>
-          <div>
-            <label className="mb-1 block text-sm font-medium text-gray-700">Photo URL (optional)</label>
-            <input
-              value={form.photoUrl}
-              onChange={(e) => setForm({ ...form, photoUrl: e.target.value })}
-              placeholder="https://..."
-              className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
-            />
           </div>
 
           {formError && <p className="col-span-2 text-sm text-red-600">{formError}</p>}

@@ -76,7 +76,6 @@ function KpiCard({
 export default function Dashboard() {
   const { user } = useAuth();
   const canRegisterAsset = user?.role === "ADMIN" || user?.role === "ASSET_MANAGER";
-  const canBookResource = user?.role !== "DEPARTMENT_HEAD";
   const [data, setData] = useState<DashboardData | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -270,14 +269,12 @@ export default function Dashboard() {
               <PackagePlus size={16} /> Register Asset
             </Link>
           )}
-          {canBookResource && (
-            <Link
-              to="/bookings"
-              className="flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-            >
-              <CalendarClock size={16} /> Book Resource
-            </Link>
-          )}
+          <Link
+            to="/bookings"
+            className="flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+          >
+            <CalendarClock size={16} /> Book Resource
+          </Link>
           <Link
             to="/maintenance"
             className="flex items-center gap-2 rounded-full border border-gray-200 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
