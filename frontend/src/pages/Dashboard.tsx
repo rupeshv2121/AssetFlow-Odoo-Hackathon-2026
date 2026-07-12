@@ -262,7 +262,7 @@ export default function Dashboard() {
         <div className="mt-4 flex flex-wrap gap-3">
           <Link
             to="/assets"
-            className="flex items-center gap-2 rounded-full bg-gradient-to-r from-sky-600 to-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:from-sky-700 hover:to-indigo-700"
+            className="flex items-center gap-2 rounded-full bg-sky-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:from-sky-700 hover:to-indigo-700"
           >
             <PackagePlus size={16} /> Register Asset
           </Link>
