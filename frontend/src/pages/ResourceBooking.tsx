@@ -83,6 +83,13 @@ export default function ResourceBooking() {
     setFormError(null);
     setIsSubmitting(true);
     try {
+      const start = new Date(form.startTime);
+      const end = new Date(form.endTime);
+      if (end <= start) {
+        setFormError("End time must be after the start time");
+        setIsSubmitting(false);
+        return;
+      }
       await bookingService.createBooking({
         assetId,
         purpose: form.purpose || undefined,
@@ -123,6 +130,13 @@ export default function ResourceBooking() {
     setRescheduleError(null);
     setBusyId(id);
     try {
+      const start = new Date(rescheduleForm.startTime);
+      const end = new Date(rescheduleForm.endTime);
+      if (end <= start) {
+        setRescheduleError("End time must be after the start time");
+        setBusyId(null);
+        return;
+      }
       await bookingService.rescheduleBooking(
         id,
         new Date(rescheduleForm.startTime).toISOString(),
@@ -209,6 +223,7 @@ export default function ResourceBooking() {
                 <input
                   type="datetime-local"
                   required
+                  min={form.startTime}
                   value={form.endTime}
                   onChange={(e) => setForm({ ...form, endTime: e.target.value })}
                   className="w-full rounded-md border border-gray-300 px-3 py-2 text-sm"
@@ -297,6 +312,7 @@ export default function ResourceBooking() {
                       <input
                         type="datetime-local"
                         value={rescheduleForm.endTime}
+                        min={rescheduleForm.startTime}
                         onChange={(e) => setRescheduleForm({ ...rescheduleForm, endTime: e.target.value })}
                         className="rounded-md border border-gray-300 px-2 py-1 text-xs"
                       />

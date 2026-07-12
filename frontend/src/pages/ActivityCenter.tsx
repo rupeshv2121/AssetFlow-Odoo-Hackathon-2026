@@ -89,6 +89,9 @@ export default function ActivityCenter() {
   const [error, setError] = useState<string | null>(null);
   const [busyId, setBusyId] = useState<string | null>(null);
 
+  const [visibleNotifications, setVisibleNotifications] = useState(5);
+  const [visibleAuditLogs, setVisibleAuditLogs] = useState(5);
+
   const activeTab = location.pathname.includes("audit") ? "audit" : "notifications";
 
   const load = () => {
@@ -236,7 +239,7 @@ export default function ActivityCenter() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {notifications.map((notification) => (
+                    {notifications.slice(0, visibleNotifications).map((notification) => (
                       <tr key={notification.id} className={notification.isRead ? "bg-white" : "bg-sky-50/40"}>
                         <td className="px-4 py-3">
                           <span
@@ -272,6 +275,16 @@ export default function ActivityCenter() {
                   </tbody>
                 </table>
               </div>
+              {visibleNotifications < notifications.length && (
+                <div className="mt-4 flex justify-center">
+                  <button
+                    onClick={() => setVisibleNotifications((prev) => prev + 5)}
+                    className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+                  >
+                    View More
+                  </button>
+                </div>
+              )}
             </Section>
 
             <Section
@@ -302,7 +315,7 @@ export default function ActivityCenter() {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-gray-100">
-                    {auditLogs.map((log: AuditLogItem) => (
+                    {auditLogs.slice(0, visibleAuditLogs).map((log: AuditLogItem) => (
                       <tr key={log.id}>
                         <td className="px-4 py-3">
                           <div className="font-medium text-gray-900">{log.user?.name || "System"}</div>
@@ -334,6 +347,16 @@ export default function ActivityCenter() {
                   </tbody>
                 </table>
               </div>
+              {visibleAuditLogs < auditLogs.length && (
+                <div className="mt-4 flex justify-center">
+                  <button
+                    onClick={() => setVisibleAuditLogs((prev) => prev + 5)}
+                    className="inline-flex items-center gap-2 rounded-lg border border-gray-200 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+                  >
+                    View More
+                  </button>
+                </div>
+              )}
             </Section>
           </div>
 
